@@ -1,0 +1,8 @@
+parameters:
+    level: max
+    paths:
+        - src
+    treatPhpDocTypesAsCertain: false
+    reportUnmatchedIgnoredErrors: true
+    excludePaths:
+        - %currentWorkingDirectory%/src/Providers/*

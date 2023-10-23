@@ -11,16 +11,22 @@ final class CardService extends Service
     /**
      * @return mixed[]
      */
-    public function bin(string $bin): array
+    public function bin(string $bin, int $payment_id = null): array
     {
-        return $this->http->post('bin', ['bin' => $bin])->toArray();
+        $params = ['bin' => $bin];
+
+        if ($payment_id !== null) {
+            $params['payment_id'] = $payment_id;
+        }
+
+        return $this->http->post('bin', $params)->toArray();
     }
 
     /**
      * @param  float[]  $subAmounts
      * @return mixed[]
      */
-    public function installment(string $bin, float $amount, array $subAmounts = []): array
+    public function installment(string $bin, float $amount, array $subAmounts = [], int $payment_id = null): array
     {
         $params = [
             'bin' => $bin,
@@ -29,6 +35,10 @@ final class CardService extends Service
 
         if ($subAmounts !== []) {
             $params['sub_amounts'] = $subAmounts;
+        }
+
+        if ($payment_id !== null) {
+            $params['payment_id'] = $payment_id;
         }
 
         return $this->http->post('installment', $params)->toArray();

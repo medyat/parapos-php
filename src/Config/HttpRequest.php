@@ -2,8 +2,12 @@
 
 namespace MedyaT\Parapos\Config;
 
+use MedyaT\Parapos\Models\Payment;
+
 final class HttpRequest implements \Stringable
 {
+    public Payment $payment;
+
     /**
      * @param  string[]  $headers
      * @param  mixed[]  $params

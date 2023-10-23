@@ -26,9 +26,12 @@ it('can create payment whire request', function () {
 
     $installmentResponse = $cardService->middleware(PaymentMiddleware::class)->installment(bin: '123456', amount: 123.45);
 
+    $json_decode_http_response = json_decode($httpResponse, true);
+    $json_decode_http_response['data']['payment_id'] = 1;
+
     expect($installmentResponse)
         ->toBeArray()
-        ->toEqual(json_decode($httpResponse, true));
+        ->toEqual($json_decode_http_response);
 
     expect(Payment::count())->toBe(1);
 

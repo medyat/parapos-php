@@ -2,8 +2,12 @@
 
 namespace MedyaT\Parapos\Config;
 
+use MedyaT\Parapos\Models\Payment;
+
 final class HttpResponse implements \Stringable
 {
+    public Payment $payment;
+
     public function __construct(public string $response)
     {
     }
@@ -20,6 +24,12 @@ final class HttpResponse implements \Stringable
      */
     public function toArray()
     {
-        return (array) json_decode($this->response, true, 512, JSON_THROW_ON_ERROR);
+        $array = (array) json_decode($this->response, true, 512, JSON_THROW_ON_ERROR);
+
+        if (isset($array['data']) && is_array($array['data']) && isset($this->payment)) {
+            $array['data']['payment_id'] = $this->payment->id;
+        }
+
+        return $array;
     }
 }

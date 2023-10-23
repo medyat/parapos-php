@@ -2,16 +2,20 @@
 
 namespace Tests;
 
+use MedyaT\Parapos\Config\HttpRequest;
+use MedyaT\Parapos\Config\HttpResponse;
+
 class TestMiddleware
 {
-    public function __invoke($request, $next)
+    public function __invoke(HttpRequest $request, $next): HttpResponse
     {
 
-        $request['params']['test_request_1'] = 'test_request_1';
+        $request->params['test_request_1'] = 'test_request_1';
 
+        /** @var HttpResponse $response */
         $response = $next($request);
 
-        $response .= ':test_response_1';
+        $response->response .= ':test_response_1';
 
         return $response;
     }

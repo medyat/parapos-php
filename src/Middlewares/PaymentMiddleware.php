@@ -3,15 +3,15 @@
 namespace MedyaT\Parapos\Middlewares;
 
 use Illuminate\Support\Arr;
+use MedyaT\Parapos\Config\HttpRequest;
 use MedyaT\Parapos\Models\Payment;
 
 final class PaymentMiddleware
 {
     /**
-     * @param  mixed[]  $request
      * @return mixed
      */
-    public function __invoke(array $request, \Closure $next)
+    public function __invoke(HttpRequest $request, \Closure $next)
     {
 
         $request = $this->fillPayment($request);
@@ -20,13 +20,9 @@ final class PaymentMiddleware
 
     }
 
-    /**
-     * @param  mixed[]  $request
-     * @return mixed[]
-     */
-    public function fillPayment(array $request): array
+    public function fillPayment(HttpRequest $request): HttpRequest
     {
-        $payment_id = Arr::get($request, 'params.payment_id', null);
+        $payment_id = Arr::get($request->params, 'payment_id', null);
 
         /** @var Payment $payment */
         $payment = Payment::query()->where('id', $payment_id)->where('status', Payment::PAYMENT_WAITING)->first();
@@ -51,14 +47,14 @@ final class PaymentMiddleware
         //        $payment->three_d_verify_hash = Arr::get($request, 'params.three_d_verify_hash', null);
         //        $payment->ip = Arr::get($request, 'params.ip', null);
 
-        $bin = Arr::get($request, 'params.bin');
+        $bin = Arr::get($request->params, 'bin');
         if (is_string($bin) && strlen($bin) > 8) {
             $payment->bin = substr($bin, 0, 8);
         }
 
         $payment->save();
 
-        Arr::set($request, 'params.payment_id', $payment->id);
+        Arr::set($request->params, 'payment_id', $payment->id);
 
         return $request;
     }

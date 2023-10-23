@@ -10,7 +10,7 @@ it('can mock http client', function () {
 
     $http->shouldReceive('get')
         ->with('https://api.parapos.com')
-        ->andReturn('test');
+        ->andReturn(new \MedyaT\Parapos\Config\HttpResponse('test'));
 
     $config = new Config();
 
@@ -18,7 +18,9 @@ it('can mock http client', function () {
 
     $value = $service->http->get('https://api.parapos.com');
 
-    expect($value)->toBe('test');
+    expect($value)
+        ->toBeInstanceOf(\MedyaT\Parapos\Config\HttpResponse::class)
+        ->toEqual('test');
 
 });
 

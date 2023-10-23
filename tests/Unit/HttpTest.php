@@ -2,6 +2,8 @@
 
 use MedyaT\Parapos\Config\Config;
 use MedyaT\Parapos\Config\Http;
+use MedyaT\Parapos\Config\HttpRequest;
+use MedyaT\Parapos\Config\HttpResponse;
 use Tests\TestMiddleware;
 
 it('test constructor injection', function () {
@@ -25,13 +27,13 @@ it('test get request', function () {
     $httpClient
         ->shouldReceive('call')
         ->with($url, 'GET', [], [])
-        ->andReturn('response');
+        ->andReturn($httpResponse = new HttpResponse('response'));
 
     $response = $httpClient->get($url);
 
     expect($response)
-        ->toBe('response')
-        ->toBeString();
+        ->toBeInstanceOf(HttpResponse::class)
+        ->toEqual($httpResponse);
 
     // Don't forget to release the mock
     Mockery::close();
@@ -47,13 +49,13 @@ it('test post request', function () {
     $httpClient
         ->shouldReceive('call')
         ->with($url, 'POST', ['x-header' => 'value'], ['key' => 'value'])
-        ->andReturn('response');
+        ->andReturn($httpResponse = new HttpResponse('response'));
 
     $response = $httpClient->post($url, ['key' => 'value'], ['x-header' => 'value']);
 
     expect($response)
-        ->toBe('response')
-        ->toBeString();
+        ->toBeInstanceOf(HttpResponse::class)
+        ->toEqual($httpResponse);
 
     // Don't forget to release the mock
     Mockery::close();
@@ -68,13 +70,13 @@ it('test put request', function () {
     $httpClient
         ->shouldReceive('call')
         ->with($url, 'PUT', [], ['key' => 'value'])
-        ->andReturn('response');
+        ->andReturn($httpResponse = new HttpResponse('response'));
 
     $response = $httpClient->put($url, ['key' => 'value']);
 
     expect($response)
-        ->toBe('response')
-        ->toBeString();
+        ->toBeInstanceOf(HttpResponse::class)
+        ->toEqual($httpResponse);
 
     // Don't forget to release the mock
     Mockery::close();
@@ -89,13 +91,13 @@ it('test delete request', function () {
     $httpClient
         ->shouldReceive('call')
         ->with($url, 'DELETE', [], [])
-        ->andReturn('response');
+        ->andReturn($httpResponse = new HttpResponse('response'));
 
     $response = $httpClient->delete($url);
 
     expect($response)
-        ->toBe('response')
-        ->toBeString();
+        ->toBeInstanceOf(HttpResponse::class)
+        ->toEqual($httpResponse);
     // Don't forget to release the mock
     Mockery::close();
 
@@ -135,29 +137,31 @@ it('test middleware closure', function () {
     $httpClient
         ->shouldReceive('call')
         ->with($url, 'POST', [], ['key' => 'request', 'test_request_1' => 'test_request_1', 'test_request_2' => 'test_request_2'])
-        ->andReturn('response');
+        ->andReturn($httpResponse = new HttpResponse('response'));
 
-    $httpClient->addMiddleware(function ($request, Closure $next) {
-        $request['params']['test_request_1'] = 'test_request_1';
+    $httpClient->addMiddleware(function (HttpRequest $request, Closure $next) {
+        $request->params['test_request_1'] = 'test_request_1';
+        /** @var HttpResponse $response */
         $response = $next($request);
-        $response .= ':test_response_1';
+        $response->response .= ':test_response_1';
 
         return $response;
     });
 
-    $httpClient->addMiddleware(function ($request, Closure $next) {
-        $request['params']['test_request_2'] = 'test_request_2';
+    $httpClient->addMiddleware(function (HttpRequest $request, Closure $next) {
+        $request->params['test_request_2'] = 'test_request_2';
+        /** @var HttpResponse $response */
         $response = $next($request);
-        $response .= ':test_response_2';
+        $response->response .= ':test_response_2';
 
         return $response;
-
     });
 
     $response = $httpClient->post('https://example.com', ['key' => 'request']);
 
     expect($response)
-        ->toBe('response:test_response_1:test_response_2');
+        ->toBeInstanceOf(HttpResponse::class)
+        ->toEqual('response:test_response_1:test_response_2');
 
 });
 
@@ -170,13 +174,14 @@ it('test middleware class', function () {
     $httpClient
         ->shouldReceive('call')
         ->with($url, 'POST', [], ['key' => 'request', 'test_request_1' => 'test_request_1'])
-        ->andReturn('response');
+        ->andReturn($httpResponse = new HttpResponse('response'));
 
     $httpClient->addMiddleware(TestMiddleware::class);
 
     $response = $httpClient->post('https://example.com', ['key' => 'request']);
 
     expect($response)
-        ->toBe('response:test_response_1');
+        ->toBeInstanceOf(HttpResponse::class)
+        ->toEqual('response:test_response_1');
 
 });

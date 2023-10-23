@@ -19,8 +19,9 @@ final class Http
     /**
      * @param  string[]  $headers
      */
-    public function get(string $uri, array $headers = []): string
+    public function get(string $uri, array $headers = []): HttpResponse
     {
+
         return $this->callWithMiddlewares(uri: $uri, method: 'GET', headers: $headers);
     }
 
@@ -28,7 +29,7 @@ final class Http
      * @param  string[]  $headers
      * @param  mixed[]  $params
      */
-    public function post(string $uri, array $params = [], array $headers = []): string
+    public function post(string $uri, array $params = [], array $headers = []): HttpResponse
     {
         return $this->callWithMiddlewares(uri: $uri, method: 'POST', headers: $headers, params: $params);
     }
@@ -37,7 +38,7 @@ final class Http
      * @param  string[]  $headers
      * @param  mixed[]  $params
      */
-    public function put(string $uri, array $params = [], array $headers = []): string
+    public function put(string $uri, array $params = [], array $headers = []): HttpResponse
     {
         return $this->callWithMiddlewares(uri: $uri, method: 'PUT', headers: $headers, params: $params);
     }
@@ -45,7 +46,7 @@ final class Http
     /**
      * @param  string[]  $headers
      */
-    public function delete(string $uri, array $headers = []): string
+    public function delete(string $uri, array $headers = []): HttpResponse
     {
         return $this->callWithMiddlewares(uri: $uri, method: 'DELETE', headers: $headers);
     }
@@ -54,14 +55,14 @@ final class Http
      * @param  string[]  $headers
      * @param  mixed[]  $params
      */
-    public function callWithMiddlewares(string $uri, string $method, array $headers, array $params = []): string
+    public function callWithMiddlewares(string $uri, string $method, array $headers, array $params = []): HttpResponse
     {
 
-        $action = fn (array $arguments): string => $this->call(
-            uri: $arguments['uri'],
-            method: $arguments['method'],
-            headers: $arguments['headers'],
-            params: $arguments['params']
+        $action = fn (HttpRequest $request): HttpResponse => $this->call(
+            uri: $request->uri,
+            method: $request->method,
+            headers: $request->headers,
+            params: $request->params
         );
 
         foreach ($this->middlewares as $middleware) {
@@ -74,15 +75,15 @@ final class Http
                 throw new \Exception('Middleware is not callable');
             }
 
-            $action = fn (array $input): string => $middleware($input, $action);
+            $action = fn (HttpRequest $request): HttpResponse => $middleware($request, $action);
         }
 
-        return $action([
-            'uri' => $uri,
-            'method' => $method,
-            'headers' => $headers,
-            'params' => $params,
-        ]);
+        return $action(new HttpRequest(
+            uri: $uri,
+            method: $method,
+            headers: $headers,
+            params: $params
+        ));
 
     }
 
@@ -97,7 +98,7 @@ final class Http
      * @param  string[]  $headers
      * @param  mixed[]  $params
      */
-    public function call(string $uri, string $method, array $headers, array $params = []): string
+    public function call(string $uri, string $method, array $headers, array $params = []): HttpResponse
     {
 
         $url = $this->config->getApiUrl($uri);
@@ -148,7 +149,7 @@ final class Http
             throw new \Exception('Response is not string');
         }
 
-        return $response;
+        return new HttpResponse(response: $response);
 
     }
 }

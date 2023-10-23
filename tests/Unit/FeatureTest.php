@@ -2,6 +2,7 @@
 
 use MedyaT\Parapos\Config\Config;
 use MedyaT\Parapos\Config\Http;
+use MedyaT\Parapos\Config\HttpResponse;
 use MedyaT\Parapos\Parapos;
 
 it('can generate test api url', function () {
@@ -46,7 +47,7 @@ it('can get service arguments', function () {
     $service = $parapos->config;
 
     expect($service)
-        ->toBeInstanceOf(\MedyaT\Parapos\Config\Config::class)
+        ->toBeInstanceOf(Config::class)
         ->and($service->isTest)
         ->toBe(true)
         ->and($service->apiKey)
@@ -66,7 +67,7 @@ it('can mock http client', function () {
 
     $http->shouldReceive('get')
         ->with('https://api.parapos.com')
-        ->andReturn('test');
+        ->andReturn(new HttpResponse('test'));
 
     $config = new Config();
 
@@ -74,13 +75,15 @@ it('can mock http client', function () {
 
     $value = $service->http->get('https://api.parapos.com');
 
-    expect($value)->toBe('test');
+    expect($value)
+        ->toBeInstanceOf(HttpResponse::class)
+        ->toEqual('test');
 
 });
 
 it('can test service signature', function () {
 
-    $service = new \MedyaT\Parapos\Config\Config([
+    $service = new Config([
         'secretKey' => 'A1',
     ]);
 

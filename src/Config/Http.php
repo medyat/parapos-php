@@ -69,6 +69,7 @@ final class Http
 
             if (is_string($middleware)) {
                 $middleware = new $middleware();
+
             }
 
             if (! is_callable($middleware)) {

@@ -59,10 +59,12 @@ final class PaymentMiddleware
         //        $payment->three_d_verify_hash = Arr::get($request, 'params.three_d_verify_hash', null);
         //        $payment->ip = Arr::get($request, 'params.ip', null);
 
-        $bin = Arr::get($request->params, 'bin');
+        if (isset($request->params['bin'])) {
+            $payment->bin = (string) $request->params['bin'];
+        }
 
-        if (is_string($bin) && strlen($bin) > 8) {
-            $payment->bin = substr($bin, 0, 8);
+        if (isset($request->params['amount'])) {
+            $payment->amount = (float) $request->params['amount'];
         }
 
         $payment->save();

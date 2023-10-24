@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @property int $id
  * @property string $bin
+ * @property float $amount
  */
 final class Payment extends Model
 {
@@ -23,6 +24,7 @@ final class Payment extends Model
      */
     protected $casts = [
         'options' => 'array',
+        'amount' => 'decimal:2',
     ];
 
     protected $hidden = [

@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $id
  * @property string $bin
  * @property float $amount
+ * @property string $ip
+ * @property string $response_hash
+ * @property int $installment
  */
 final class Payment extends Model
 {

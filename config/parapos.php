@@ -5,4 +5,5 @@ return [
     'apiKey' => '',
     'secretKey' => '',
     'language' => 'tr',
+    'isMarketplace' => false,
 ];

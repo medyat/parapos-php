@@ -10,6 +10,8 @@ final class Config
 
     public bool $isTest = true;
 
+    public bool $isMarketplace = false;
+
     public string $apiUrl;
 
     public string $apiKey;
@@ -17,6 +19,8 @@ final class Config
     public string $secretKey;
 
     public string $language = 'tr';
+
+    public string $response_url = 'parapos/response/{hash}';
 
     private function setApiUrl(string $url = null): void
     {
@@ -40,6 +44,10 @@ final class Config
         if (isset($arguments['isTest'])) {
             $this->isTest = (bool) $arguments['isTest'];
         }
+
+        if (isset($arguments['isMarketplace'])) {
+            $this->isMarketplace = (bool) $arguments['isMarketplace'];
+        }
         if (isset($arguments['apiKey'])) {
             $this->apiKey = $arguments['apiKey'];
         }
@@ -48,6 +56,9 @@ final class Config
         }
         if (isset($arguments['language'])) {
             $this->language = $arguments['language'];
+        }
+        if (isset($arguments['response_url'])) {
+            $this->response_url = $arguments['response_url'];
         }
 
         $this->setApiUrl($arguments['apiUrl'] ?? null);
@@ -62,5 +73,14 @@ final class Config
     public function getApiUrl(string $uri): string
     {
         return $this->apiUrl.'/'.trim($uri, '/');
+    }
+
+    public function getResponseUrl(string $hash): string
+    {
+        $app_url = config('app.url');
+
+        $app_url = rtrim((string) $app_url, '/');
+
+        return $app_url.'/'.str_replace('{hash}', $hash, $this->response_url);
     }
 }

@@ -12,19 +12,17 @@ final class ParaposServiceProvider extends ServiceProvider
     {
         $this->loadMigrationsFrom(__DIR__.'/../../database/migrations');
 
-        $this->publishes([
-            __DIR__.'/../../config/parapos.php' => config_path('parapos.php'),
-        ]);
+        $this->publishes([__DIR__.'/../../config/parapos.php' => config_path('parapos.php')]);
 
+        $this->loadRoutesFrom(__DIR__.'/../../routes/web.php');
+
+        $this->loadViewsFrom(__DIR__.'/../../resources/views', 'parapos');
     }
 
     public function register(): void
     {
-        $this->mergeConfigFrom(
-            __DIR__.'/../../config/parapos.php', 'parapos'
-        );
+        $this->mergeConfigFrom(__DIR__.'/../../config/parapos.php', 'parapos');
 
         $this->app->scoped(Parapos::class, fn (Application $app): Parapos => new Parapos(config('parapos')));
-
     }
 }

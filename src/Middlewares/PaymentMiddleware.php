@@ -3,6 +3,7 @@
 namespace MedyaT\Parapos\Middlewares;
 
 use Illuminate\Support\Arr;
+use MedyaT\Parapos\Actions\FindOrNewPaymentAction;
 use MedyaT\Parapos\Config\HttpRequest;
 use MedyaT\Parapos\Config\HttpResponse;
 use MedyaT\Parapos\Models\Payment;
@@ -26,22 +27,10 @@ final class PaymentMiddleware
     public function createPayment(HttpRequest $request): HttpRequest
     {
 
-        $payment = new Payment(['status' => Payment::PAYMENT_WAITING]);
-
         // if there is no payment_id in params, create a new payment
         $payment_id = Arr::get($request->params, 'payment_id', null);
 
-        if (! is_null($payment_id)) {
-
-            $paymentFromDb = Payment::query()
-                ->where('id', $payment_id)
-                ->where('status', Payment::PAYMENT_WAITING)->first();
-
-            if (! is_null($paymentFromDb)) {
-                /** @var Payment $payment */
-                $payment = $paymentFromDb;
-            }
-        }
+        $payment = (new FindOrNewPaymentAction())($payment_id);
 
         //        $payment->last_four = Arr::get($request, 'params.last_four', null);
         //        $payment->currency_code = Arr::get($request, 'params.currency_code', 'TRY');

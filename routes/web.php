@@ -2,6 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use MedyaT\Parapos\Exceptions\VerifyResponseMiddlewareShouldBeImplemented;
+use MedyaT\Parapos\Middlewares\VerifyResponseMiddlewareInterface;
 use MedyaT\Parapos\Models\Payment;
 
 Route::post('parapos/response/{hash}', function (Request $request, $hash) {
@@ -15,7 +17,15 @@ Route::post('parapos/response/{hash}', function (Request $request, $hash) {
         ? Payment::PAYMENT_SUCCESS
         : Payment::PAYMENT_FAIL;
 
-    // Run middleware ???
+    $middlewares = config('parapos.response_middlewares', []);
+
+    foreach ($middlewares as $middleware) {
+        $middleware = new $middleware;
+        if (! in_array(VerifyResponseMiddlewareInterface::class, class_implements($middleware))) {
+            throw new VerifyResponseMiddlewareShouldBeImplemented();
+        }
+        $middleware($request, $payment);
+    }
 
     $payment->save();
 

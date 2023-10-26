@@ -4,6 +4,7 @@ use MedyaT\Parapos\Config\Config;
 use MedyaT\Parapos\Config\Http;
 use MedyaT\Parapos\Config\HttpRequest;
 use MedyaT\Parapos\Config\HttpResponse;
+use MedyaT\Parapos\Models\Payment;
 use Tests\TestMiddleware;
 
 it('test constructor injection', function () {
@@ -24,12 +25,15 @@ it('test get request', function () {
 
     $url = 'https://example.com';
 
+    $payment = new Payment();
+    $payment->save();
+
     $httpClient
         ->shouldReceive('call')
-        ->with($url, 'GET', [], [])
-        ->andReturn($httpResponse = new HttpResponse('response'));
+        ->with($payment, $url, 'GET', [], [])
+        ->andReturn($httpResponse = new HttpResponse($payment, 'response'));
 
-    $response = $httpClient->get($url);
+    $response = $httpClient->get($payment, $url);
 
     expect($response)
         ->toBeInstanceOf(HttpResponse::class)
@@ -46,12 +50,15 @@ it('test post request', function () {
 
     $url = 'https://example.com';
 
+    $payment = new Payment();
+    $payment->save();
+
     $httpClient
         ->shouldReceive('call')
-        ->with($url, 'POST', ['x-header' => 'value'], ['key' => 'value'])
-        ->andReturn($httpResponse = new HttpResponse('response'));
+        ->with($payment, $url, 'POST', ['x-header' => 'value'], ['key' => 'value'])
+        ->andReturn($httpResponse = new HttpResponse($payment, 'response'));
 
-    $response = $httpClient->post($url, ['key' => 'value'], ['x-header' => 'value']);
+    $response = $httpClient->post($payment, $url, ['key' => 'value'], ['x-header' => 'value']);
 
     expect($response)
         ->toBeInstanceOf(HttpResponse::class)
@@ -67,12 +74,15 @@ it('test put request', function () {
 
     $url = 'https://example.com';
 
+    $payment = new Payment();
+    $payment->save();
+
     $httpClient
         ->shouldReceive('call')
-        ->with($url, 'PUT', [], ['key' => 'value'])
-        ->andReturn($httpResponse = new HttpResponse('response'));
+        ->with($payment, $url, 'PUT', [], ['key' => 'value'])
+        ->andReturn($httpResponse = new HttpResponse($payment, 'response'));
 
-    $response = $httpClient->put($url, ['key' => 'value']);
+    $response = $httpClient->put($payment, $url, ['key' => 'value']);
 
     expect($response)
         ->toBeInstanceOf(HttpResponse::class)
@@ -88,12 +98,15 @@ it('test delete request', function () {
 
     $url = 'https://example.com';
 
+    $payment = new Payment();
+    $payment->save();
+
     $httpClient
         ->shouldReceive('call')
-        ->with($url, 'DELETE', [], [])
-        ->andReturn($httpResponse = new HttpResponse('response'));
+        ->with($payment, $url, 'DELETE', [], [])
+        ->andReturn($httpResponse = new HttpResponse($payment, 'response'));
 
-    $response = $httpClient->delete($url);
+    $response = $httpClient->delete($payment, $url);
 
     expect($response)
         ->toBeInstanceOf(HttpResponse::class)
@@ -134,10 +147,13 @@ it('test middleware closure', function () {
 
     $url = 'https://example.com';
 
+    $payment = new Payment();
+    $payment->save();
+
     $httpClient
         ->shouldReceive('call')
-        ->with($url, 'POST', [], ['key' => 'request', 'test_request_1' => 'test_request_1', 'test_request_2' => 'test_request_2'])
-        ->andReturn($httpResponse = new HttpResponse('response'));
+        ->with($payment, $url, 'POST', [], ['key' => 'request', 'test_request_1' => 'test_request_1', 'test_request_2' => 'test_request_2'])
+        ->andReturn($httpResponse = new HttpResponse($payment, 'response'));
 
     $httpClient->addMiddleware(function (HttpRequest $request, Closure $next) {
         $request->params['test_request_1'] = 'test_request_1';
@@ -157,7 +173,7 @@ it('test middleware closure', function () {
         return $response;
     });
 
-    $response = $httpClient->post('https://example.com', ['key' => 'request']);
+    $response = $httpClient->post($payment, 'https://example.com', ['key' => 'request']);
 
     expect($response)
         ->toBeInstanceOf(HttpResponse::class)
@@ -171,14 +187,17 @@ it('test middleware class', function () {
 
     $url = 'https://example.com';
 
+    $payment = new Payment();
+    $payment->save();
+
     $httpClient
         ->shouldReceive('call')
-        ->with($url, 'POST', [], ['key' => 'request', 'test_request_1' => 'test_request_1'])
-        ->andReturn($httpResponse = new HttpResponse('response'));
+        ->with($payment, $url, 'POST', [], ['key' => 'request', 'test_request_1' => 'test_request_1'])
+        ->andReturn($httpResponse = new HttpResponse($payment, 'response'));
 
     $httpClient->addMiddleware(TestMiddleware::class);
 
-    $response = $httpClient->post('https://example.com', ['key' => 'request']);
+    $response = $httpClient->post($payment, 'https://example.com', ['key' => 'request']);
 
     expect($response)
         ->toBeInstanceOf(HttpResponse::class)

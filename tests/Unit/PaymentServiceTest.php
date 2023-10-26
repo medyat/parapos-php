@@ -15,9 +15,9 @@ it('payment needs to have bin method', function () {
 
 it('can test pay3d', function () {
 
-    $parapos = new Parapos(['apiUrl' => 'https://testpos.bayi.biz/api', 'secretKey' => '']);
+    $parapos = new Parapos(['apiUrl' => 'https://testpos.bayi.biz/api', 'secretKey' => '21VEyjUYlsYHnuKo3qCSN2y14vG2Oz7FoS1Sra5x']);
 
-    $response = $parapos->payment()
+    $parapos = $parapos->payment()
         ->addCard(
             card_number: '5269 5511 2222 3339',
             name: 'John Doe',
@@ -28,15 +28,30 @@ it('can test pay3d', function () {
         ->addPayment(
             client_ip: '127.0.0.1',
             amount: 123.45,
-            installment: 1,
+            user_id: 1,
+            reference_id: 55,
+            installment: 2
         )
         ->addDealerAmount(
             dealer_id: 1,
             amount: 123.45,
             dealer_commission_amount: 0,
-        )
-        ->pay3d();
+        );
+
+    $response = $parapos->pay3d();
+
+    $db_payment = \MedyaT\Parapos\Models\Payment::find($parapos->payment->id);
+
+    expect($db_payment->status)
+        ->toEqual(\MedyaT\Parapos\Models\Payment::PAYMENT_WAITING);
+
+    expect($db_payment->amount)
+        ->toEqual(123.45);
+
+    expect($db_payment->installment)
+        ->toEqual(2);
 
     expect($response)
         ->toHaveKeys(['parapos_code', 'url']);
+
 });

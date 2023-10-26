@@ -29,7 +29,7 @@ Route::post('parapos/response/{hash}', function (Request $request, $hash) {
 
     $payment->save();
 
-    return view('payment.response', [
+    return view(config('parapos.view', 'parapos::response'), [
         'id' => $payment->id,
         'result_code' => $resultCode,
         'result_message' => $resultMessage,

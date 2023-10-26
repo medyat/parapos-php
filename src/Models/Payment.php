@@ -6,11 +6,18 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property int $id
+ * @property string $parapos_code
  * @property string $bin
  * @property float $amount
+ * @property string $name
  * @property string $ip
  * @property string $response_hash
+ * @property string $currency_code
+ * @property string $last_four
  * @property int $installment
+ * @property int $status
+ * @property ?int $reference_id
+ * @property ?int $user_id
  */
 final class Payment extends Model
 {
@@ -26,7 +33,6 @@ final class Payment extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'options' => 'array',
         'amount' => 'decimal:2',
     ];
 

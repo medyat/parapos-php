@@ -3,12 +3,10 @@
 namespace MedyaT\Parapos\Middlewares;
 
 use Illuminate\Support\Arr;
-use MedyaT\Parapos\Actions\FindOrNewPaymentAction;
 use MedyaT\Parapos\Config\HttpRequest;
 use MedyaT\Parapos\Config\HttpResponse;
-use MedyaT\Parapos\Models\Payment;
 
-final class PaymentMiddleware
+final class PaymentBinMiddleware
 {
     /**
      * @return mixed
@@ -27,11 +25,6 @@ final class PaymentMiddleware
     public function createPayment(HttpRequest $request): HttpRequest
     {
 
-        // if there is no payment_id in params, create a new payment
-        $payment_id = Arr::get($request->params, 'payment_id', null);
-
-        $payment = (new FindOrNewPaymentAction())($payment_id);
-
         //        $payment->last_four = Arr::get($request, 'params.last_four', null);
         //        $payment->currency_code = Arr::get($request, 'params.currency_code', 'TRY');
 
@@ -49,18 +42,14 @@ final class PaymentMiddleware
         //        $payment->ip = Arr::get($request, 'params.ip', null);
 
         if (isset($request->params['bin'])) {
-            $payment->bin = (string) $request->params['bin'];
+            $request->payment->bin = (string) $request->params['bin'];
         }
 
         if (isset($request->params['amount'])) {
-            $payment->amount = (float) $request->params['amount'];
+            $request->payment->amount = (float) $request->params['amount'];
         }
 
-        $payment->save();
-
-        $request->payment = $payment;
-
-        Arr::set($request->params, 'payment_id', $payment->id);
+        $request->payment->save();
 
         return $request;
     }

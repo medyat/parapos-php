@@ -10,4 +10,5 @@ return [
         \MedyaT\Parapos\Middlewares\VerifyResponseMiddleware::class,
     ],
     'response_url' => 'parapos/response/{hash}',
+    'view' => 'parapos::response',
 ];

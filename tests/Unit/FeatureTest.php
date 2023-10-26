@@ -3,6 +3,7 @@
 use MedyaT\Parapos\Config\Config;
 use MedyaT\Parapos\Config\Http;
 use MedyaT\Parapos\Config\HttpResponse;
+use MedyaT\Parapos\Models\Payment;
 use MedyaT\Parapos\Parapos;
 
 it('can generate test api url', function () {
@@ -65,15 +66,18 @@ it('can mock http client', function () {
 
     $http = Mockery::mock(Http::class);
 
+    $payment = new Payment();
+    $payment->save();
+
     $http->shouldReceive('get')
-        ->with('https://api.parapos.com')
-        ->andReturn(new HttpResponse('test'));
+        ->with($payment, 'https://api.parapos.com')
+        ->andReturn(new HttpResponse($payment, 'test'));
 
     $config = new Config();
 
     $service = new \MedyaT\Parapos\Services\PaymentService($config, $http);
 
-    $value = $service->http->get('https://api.parapos.com');
+    $value = $service->http->get($payment, 'https://api.parapos.com');
 
     expect($value)
         ->toBeInstanceOf(HttpResponse::class)

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MedyaT\Parapos\Services;
 
+use MedyaT\Parapos\Actions\FindOrNewPaymentAction;
 use MedyaT\Parapos\Config\Service;
 
 final class CardService extends Service
@@ -15,11 +16,9 @@ final class CardService extends Service
     {
         $params = ['bin' => $bin];
 
-        if ($payment_id !== null) {
-            $params['payment_id'] = $payment_id;
-        }
+        $payment = (new FindOrNewPaymentAction())($payment_id);
 
-        return $this->http->post('bin', $params)->toArray();
+        return $this->http->post(payment: $payment, uri: 'bin', params: $params)->toArray();
     }
 
     /**
@@ -37,10 +36,8 @@ final class CardService extends Service
             $params['sub_amounts'] = $subAmounts;
         }
 
-        if ($payment_id !== null) {
-            $params['payment_id'] = $payment_id;
-        }
+        $payment = (new FindOrNewPaymentAction())($payment_id);
 
-        return $this->http->post('installment', $params)->toArray();
+        return $this->http->post(payment: $payment, uri: 'installment', params: $params)->toArray();
     }
 }

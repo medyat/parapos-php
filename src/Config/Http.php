@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MedyaT\Parapos\Config;
 
 use Closure;
+use MedyaT\Parapos\Models\Payment;
 
 final class Http
 {
@@ -19,46 +20,47 @@ final class Http
     /**
      * @param  string[]  $headers
      */
-    public function get(string $uri, array $headers = []): HttpResponse
+    public function get(Payment $payment, string $uri, array $headers = []): HttpResponse
     {
 
-        return $this->callWithMiddlewares(uri: $uri, method: 'GET', headers: $headers);
+        return $this->callWithMiddlewares(payment: $payment, uri: $uri, method: 'GET', headers: $headers);
     }
 
     /**
      * @param  string[]  $headers
      * @param  mixed[]  $params
      */
-    public function post(string $uri, array $params = [], array $headers = []): HttpResponse
+    public function post(Payment $payment, string $uri, array $params = [], array $headers = []): HttpResponse
     {
-        return $this->callWithMiddlewares(uri: $uri, method: 'POST', headers: $headers, params: $params);
+        return $this->callWithMiddlewares(payment: $payment, uri: $uri, method: 'POST', headers: $headers, params: $params);
     }
 
     /**
      * @param  string[]  $headers
      * @param  mixed[]  $params
      */
-    public function put(string $uri, array $params = [], array $headers = []): HttpResponse
+    public function put(Payment $payment, string $uri, array $params = [], array $headers = []): HttpResponse
     {
-        return $this->callWithMiddlewares(uri: $uri, method: 'PUT', headers: $headers, params: $params);
+        return $this->callWithMiddlewares(payment: $payment, uri: $uri, method: 'PUT', headers: $headers, params: $params);
     }
 
     /**
      * @param  string[]  $headers
      */
-    public function delete(string $uri, array $headers = []): HttpResponse
+    public function delete(Payment $payment, string $uri, array $headers = []): HttpResponse
     {
-        return $this->callWithMiddlewares(uri: $uri, method: 'DELETE', headers: $headers);
+        return $this->callWithMiddlewares(payment: $payment, uri: $uri, method: 'DELETE', headers: $headers);
     }
 
     /**
      * @param  string[]  $headers
      * @param  mixed[]  $params
      */
-    public function callWithMiddlewares(string $uri, string $method, array $headers, array $params = []): HttpResponse
+    public function callWithMiddlewares(Payment $payment, string $uri, string $method, array $headers, array $params = []): HttpResponse
     {
 
         $action = fn (HttpRequest $request): HttpResponse => $this->call(
+            payment: $request->payment,
             uri: $request->uri,
             method: $request->method,
             headers: $request->headers,
@@ -80,6 +82,7 @@ final class Http
         }
 
         return $action(new HttpRequest(
+            payment: $payment,
             uri: $uri,
             method: $method,
             headers: $headers,
@@ -99,7 +102,7 @@ final class Http
      * @param  string[]  $headers
      * @param  mixed[]  $params
      */
-    public function call(string $uri, string $method, array $headers, array $params = []): HttpResponse
+    public function call(Payment $payment, string $uri, string $method, array $headers, array $params = []): HttpResponse
     {
 
         $url = $this->config->getApiUrl($uri);
@@ -150,7 +153,7 @@ final class Http
             throw new \Exception('Response is not string');
         }
 
-        return new HttpResponse(response: $response);
+        return new HttpResponse(payment: $payment, response: $response, headers: curl_getinfo($request));
 
     }
 }

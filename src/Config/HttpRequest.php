@@ -6,13 +6,11 @@ use MedyaT\Parapos\Models\Payment;
 
 final class HttpRequest implements \Stringable
 {
-    public Payment $payment;
-
     /**
      * @param  string[]  $headers
      * @param  mixed[]  $params
      */
-    public function __construct(public string $uri, public string $method, public array $headers, public array $params = [])
+    public function __construct(public Payment $payment, public string $uri, public string $method, public array $headers, public array $params = [])
     {
 
     }

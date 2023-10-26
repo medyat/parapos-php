@@ -8,15 +8,18 @@ it('can mock http client', function () {
 
     $http = Mockery::mock(Http::class);
 
+    $payment = new \MedyaT\Parapos\Models\Payment();
+    $payment->save();
+
     $http->shouldReceive('get')
-        ->with('https://api.parapos.com')
-        ->andReturn(new \MedyaT\Parapos\Config\HttpResponse('test'));
+        ->with($payment, 'https://api.parapos.com')
+        ->andReturn(new \MedyaT\Parapos\Config\HttpResponse($payment, 'test'));
 
     $config = new Config();
 
     $service = new PaymentService($config, $http);
 
-    $value = $service->http->get('https://api.parapos.com');
+    $value = $service->http->get($payment, 'https://api.parapos.com');
 
     expect($value)
         ->toBeInstanceOf(\MedyaT\Parapos\Config\HttpResponse::class)

@@ -11,6 +11,7 @@ use MedyaT\Parapos\DataObjects\CardDataObject;
 use MedyaT\Parapos\DataObjects\DealerAmountDataObject;
 use MedyaT\Parapos\Exceptions\NoCreditCardDefined;
 use MedyaT\Parapos\Exceptions\NoPaymentDefined;
+use MedyaT\Parapos\Middlewares\PaymentPay3dMiddleware;
 use MedyaT\Parapos\Models\Payment;
 
 final class PaymentService extends Service
@@ -54,7 +55,9 @@ final class PaymentService extends Service
             $params = [...$params, 'is_pool_payment' => 1, 'commission_scenario' => 3, 'sub_dealers' => $this->dealer_amounts];
         }
 
-        $result = $this->http->post('pay_3d', $params)->toArray();
+        $this->middleware(PaymentPay3dMiddleware::class);
+
+        $result = $this->http->post(payment: $this->payment, uri: 'pay_3d', params: $params)->toArray();
 
         return [
             'parapos_code' => Arr::get($result, 'data.id'),
@@ -100,13 +103,19 @@ final class PaymentService extends Service
     public function addPayment(
         string $client_ip,
         float $amount,
-        int $installment = 1,
         int $payment_id = null,
+        int $user_id = null,
+        int $reference_id = null,
+        string $currency_code = 'TRY',
+        int $installment = 1,
     ): self {
         $this->payment = (new FindOrNewPaymentAction())($payment_id);
         $this->payment->ip = $client_ip;
         $this->payment->amount = $amount;
         $this->payment->installment = $installment;
+        $this->payment->currency_code = $currency_code;
+        $this->payment->user_id = $user_id;
+        $this->payment->reference_id = $reference_id;
         $this->payment->save();
 
         return $this;

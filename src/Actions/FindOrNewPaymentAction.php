@@ -23,6 +23,8 @@ final class FindOrNewPaymentAction
             }
         }
 
+        $payment->save();
+
         return $payment;
 
     }

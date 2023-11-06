@@ -108,6 +108,9 @@ final class PaymentService extends Service
         int $reference_id = null,
         string $currency_code = 'TRY',
         int $installment = 1,
+        int $foreign_id_1 = null,
+        int $foreign_id_2 = null,
+        int $foreign_id_3 = null,
     ): self {
         $this->payment = (new FindOrNewPaymentAction())($payment_id);
         $this->payment->ip = $client_ip;
@@ -116,6 +119,9 @@ final class PaymentService extends Service
         $this->payment->currency_code = $currency_code;
         $this->payment->user_id = $user_id;
         $this->payment->reference_id = $reference_id;
+        $this->payment->foreign_id_1 = $foreign_id_1;
+        $this->payment->foreign_id_2 = $foreign_id_2;
+        $this->payment->foreign_id_3 = $foreign_id_3;
         $this->payment->save();
 
         return $this;

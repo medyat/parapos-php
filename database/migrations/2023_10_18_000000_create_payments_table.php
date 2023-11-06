@@ -28,7 +28,9 @@ return new class extends Migration
             $table->decimal('amount', 11, 2)->unsigned()->default(0.00);
             $table->string('name', 50)->nullable();
             $table->string('bin', 8)->nullable();
-            $table->string('three_d_verify_hash', 100)->nullable();
+            $table->unsignedInteger('foreign_id_1')->nullable();
+            $table->unsignedInteger('foreign_id_2')->nullable();
+            $table->unsignedInteger('foreign_id_3')->nullable();
             $table->ipAddress('ip')->nullable();
             $table->timestamps();
         });

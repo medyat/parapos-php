@@ -17,6 +17,9 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $installment
  * @property int $status
  * @property ?int $reference_id
+ * @property ?int $foreign_id_1
+ * @property ?int $foreign_id_2
+ * @property ?int $foreign_id_3
  * @property ?int $user_id
  */
 final class Payment extends Model

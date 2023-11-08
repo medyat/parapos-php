@@ -10,17 +10,17 @@ it('can payment with bin request', function () {
 
     $http = Mockery::mock('\MedyaT\Parapos\Config\Http[call]', [$config = new Config()]);
 
-    $payment = new Payment();
-    $payment->save();
-
     $firstPayment = \MedyaT\Parapos\Models\Payment::create([
         'amount' => 100,
         'installment' => 1,
     ]);
 
+    $payment = new Payment();
+    $payment->save();
+
     $http
         ->shouldReceive('call')
-        ->with($payment, 'bin', 'POST', [], ['bin' => '123456', 'payment_id' => 2])
+        ->with(Payment::class, 'bin', 'POST', [], ['bin' => '123456'])
         ->andReturn(new HttpResponse($payment, json_encode($arrayValue = ['data' => ['installments' => [['installment' => 1]]]])));
 
     $installmentService = new CardService($config, $http);
@@ -30,7 +30,7 @@ it('can payment with bin request', function () {
     $installmentResponse = $installmentService->bin(bin: '123456', payment_id: $payment->id);
 
     // add payment_id to params
-    $arrayValue['data']['payment_id'] = 2;
+    $arrayValue['data']['payment_id'] = $payment->id;
 
     expect($installmentResponse)
         ->toBeArray()
@@ -39,7 +39,7 @@ it('can payment with bin request', function () {
     expect(\MedyaT\Parapos\Models\Payment::count())
         ->toEqual(2);
 
-    $payment = \MedyaT\Parapos\Models\Payment::find(2);
+    $payment->refresh();
 
     expect($payment->amount)
         ->toEqual(0);
@@ -56,11 +56,6 @@ it('can update payment with installments request', function () {
     $paymentDb = new Payment();
     $paymentDb->save();
 
-    \MedyaT\Parapos\Models\Payment::create([
-        'amount' => 100,
-        'installment' => 1,
-    ]);
-
     $payment = \MedyaT\Parapos\Models\Payment::create([
         'amount' => 100,
         'installment' => 1,
@@ -68,7 +63,7 @@ it('can update payment with installments request', function () {
 
     $http
         ->shouldReceive('call')
-        ->with($paymentDb, 'installment', 'POST', [], ['bin' => '123456', 'amount' => 123.45])
+        ->with(Payment::class, 'installment', 'POST', [], ['bin' => '123456', 'amount' => 123.45])
         ->andReturn(new HttpResponse($paymentDb, json_encode($arrayValue = ['data' => ['installments' => [['installment' => 1]]]])));
 
     $installmentService = new CardService($config, $http);

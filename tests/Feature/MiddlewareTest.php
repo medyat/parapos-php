@@ -20,14 +20,20 @@ it('can create payment whire request', function () {
 
     $httpClient
         ->shouldReceive('call')
-        ->with($payment, 'installment', 'POST', [], ['bin' => '123456', 'amount' => 123.45])
+        ->with(Payment::class, 'installment', 'POST', [], ['bin' => '123456', 'amount' => 123.45])
         ->andReturn(new HttpResponse($payment, $httpResponse, []));
 
     //        $httpClient = new \MedyaT\Parapos\Config\Http($config);
 
     $cardService = new \MedyaT\Parapos\Services\CardService($config, $httpClient);
 
-    $installmentResponse = $cardService->middleware(PaymentBinMiddleware::class)->installment(bin: '123456', amount: 123.45, payment_id: $payment->id);
+    $installmentResponse = $cardService
+        ->middleware(PaymentBinMiddleware::class)
+        ->installment(
+            bin: '123456',
+            amount: 123.45,
+            payment_id: $payment->id,
+        );
 
     $json_decode_http_response = json_decode($httpResponse, true);
     $json_decode_http_response['data']['payment_id'] = 1;

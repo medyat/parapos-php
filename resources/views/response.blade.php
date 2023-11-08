@@ -19,6 +19,7 @@ $result_message = !empty($result_message) ? $result_message : "";
     var message = {
         'type': 'paymentResponse',
         'id': '<?php if (isset($id)) echo $id; ?>',
+        'hash': '<?php if (isset($hash)) echo $hash; ?>',
         'result_message': '<?php if (isset($result_message)) echo $result_message; ?>',
         'result_code': '<?php echo isset($result_code) ? $result_code : 'FAIL'; ?>'
     };

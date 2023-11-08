@@ -6,7 +6,7 @@ use MedyaT\Parapos\Exceptions\VerifyResponseMiddlewareShouldBeImplemented;
 use MedyaT\Parapos\Middlewares\VerifyResponseMiddlewareInterface;
 use MedyaT\Parapos\Models\Payment;
 
-Route::post('parapos/response/{hash}', function (Request $request, $hash) {
+Route::post('parapos/response/{hash}/{tenant?}', function (Request $request, $hash, $tenant = null) {
 
     $payment = Payment::where('response_hash', $hash)->firstOrFail();
 
@@ -31,8 +31,11 @@ Route::post('parapos/response/{hash}', function (Request $request, $hash) {
 
     return view(config('parapos.view', 'parapos::response'), [
         'id' => $payment->id,
+        'hash' => $payment->response_hash,
         'result_code' => $resultCode,
         'result_message' => $resultMessage,
     ]);
 
-})->name('parapos.response');
+})
+    ->middleware('parapos-middleware')
+    ->name('parapos.response');

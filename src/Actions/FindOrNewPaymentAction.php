@@ -9,13 +9,13 @@ final class FindOrNewPaymentAction
     public function __invoke(int $payment_id = null): Payment
     {
 
-        $payment = new Payment(['status' => Payment::PAYMENT_WAITING]);
+        $payment = new Payment(['status' => Payment::PAYMENT_PENDING]);
 
         if (! is_null($payment_id)) {
 
             $paymentFromDb = Payment::query()
                 ->where('id', $payment_id)
-                ->where('status', Payment::PAYMENT_WAITING)->first();
+                ->where('status', Payment::PAYMENT_PENDING)->first();
 
             if (! is_null($paymentFromDb)) {
                 /** @var Payment $payment */

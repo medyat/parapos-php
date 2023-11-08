@@ -26,7 +26,7 @@ final class Payment extends Model
 {
     public const PAYMENT_SUCCESS = 0;
 
-    public const PAYMENT_WAITING = 1;
+    public const PAYMENT_PENDING = 1;
 
     public const PAYMENT_FAIL = 2;
 
@@ -47,7 +47,7 @@ final class Payment extends Model
      * @var array<string, mixed>
      */
     protected $attributes = [
-        'status' => self::PAYMENT_WAITING,
+        'status' => self::PAYMENT_PENDING,
     ];
 
     /**

@@ -43,7 +43,7 @@ it('can test pay3d', function () {
     $db_payment = \MedyaT\Parapos\Models\Payment::find($parapos->payment->id);
 
     expect($db_payment->status)
-        ->toEqual(\MedyaT\Parapos\Models\Payment::PAYMENT_WAITING);
+        ->toEqual(\MedyaT\Parapos\Models\Payment::PAYMENT_PENDING);
 
     expect($db_payment->amount)
         ->toEqual(123.45);

@@ -9,6 +9,8 @@ return [
     'response_middlewares' => [
         \MedyaT\Parapos\Middlewares\VerifyResponseMiddleware::class,
     ],
-    'response_url' => 'parapos/response/{hash}',
+    'route_middlewares' => [],
+    'response_url' => 'parapos/response/{hash}/{tenant?}',
     'view' => 'parapos::response',
+    'tenant' => null,
 ];

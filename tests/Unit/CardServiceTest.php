@@ -24,17 +24,19 @@ it('can mock http client for bin', function () {
     // mock http client
     $http = Mockery::mock('\MedyaT\Parapos\Config\Http[call]', [$config = new Config()]);
 
-    $payment = new Payment(['status' => Payment::PAYMENT_WAITING]);
+    $payment = new Payment(['status' => Payment::PAYMENT_PENDING]);
     $payment->save();
 
     $http
         ->shouldReceive('call')
-        ->with($payment, 'bin', 'POST', [], ['bin' => '123456'])
+        ->with(Payment::class, 'bin', 'POST', [], ['bin' => '123456'])
         ->andReturn(new HttpResponse(payment: $payment, response: json_encode($arrayValue = ['data' => ['bin' => '123456']])));
 
     $installmentService = new CardService($config, $http);
 
     $binResponse = $installmentService->bin(bin: '123456', payment_id: $payment->id);
+
+    $arrayValue['data']['payment_id'] = $payment->id;
 
     expect($binResponse)
         ->toBeArray()
@@ -51,12 +53,14 @@ it('can make request for installment method anothers', function () {
 
     $http
         ->shouldReceive('call')
-        ->with($payment, 'installment', 'POST', [], ['bin' => '123456', 'amount' => 123.45])
+        ->with(Payment::class, 'installment', 'POST', [], ['bin' => '123456', 'amount' => 123.45])
         ->andReturn(new HttpResponse($payment, json_encode($arrayValue = ['data' => ['installments' => []]])));
 
     $installmentService = new CardService($config, $http);
 
     $installmentResponse = $installmentService->installment(bin: '123456', amount: 123.45, payment_id: $payment->id);
+
+    $arrayValue['data']['payment_id'] = $payment->id;
 
     expect($installmentResponse)
         ->toBeArray()
@@ -72,12 +76,14 @@ it('can make request for installment method with sub amounts', function () {
 
     $http
         ->shouldReceive('call')
-        ->with($payment, 'installment', 'POST', [], ['bin' => '123456', 'amount' => 123.45, 'sub_amounts' => [100, 20, 3.45]])
+        ->with(Payment::class, 'installment', 'POST', [], ['bin' => '123456', 'amount' => 123.45, 'sub_amounts' => [100, 20, 3.45]])
         ->andReturn(new HttpResponse($payment, json_encode($arrayValue = ['data' => ['installments' => [['installment' => 1]]]])));
 
     $installmentService = new CardService($config, $http);
 
     $installmentResponse = $installmentService->installment(bin: '123456', amount: 123.45, subAmounts: [100, 20, 3.45], payment_id: $payment->id);
+
+    $arrayValue['data']['payment_id'] = $payment->id;
 
     expect($installmentResponse)
         ->toBeArray()

@@ -77,10 +77,23 @@ final class Config
 
     public function getResponseUrl(string $hash): string
     {
+
+        $response_url = config('parapos.response_url', 'parapos/response/{hash}/{tenant?}');
+
+        $response_url = str_replace('{hash}', $hash, (string) $response_url);
+
+        $tenant = config('parapos.tenant');
+
+        if (! empty($tenant)) {
+            $response_url = str_replace('{tenant?}', $tenant, $response_url);
+        } else {
+            $response_url = str_replace('/{tenant?}', '', $response_url);
+        }
+
         $app_url = config('app.url');
 
         $app_url = rtrim((string) $app_url, '/');
 
-        return $app_url.'/'.str_replace('{hash}', $hash, $this->response_url);
+        return $app_url.'/'.$response_url;
     }
 }

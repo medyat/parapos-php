@@ -6,7 +6,7 @@ use MedyaT\Parapos\Models\Payment;
 
 final class HttpResponse implements \Stringable
 {
-    /** @param  mixed[]  $headers  */
+    /** @param  mixed[]  $headers */
     public function __construct(public Payment $payment, public string $response, public array $headers = [])
     {
     }
@@ -25,7 +25,7 @@ final class HttpResponse implements \Stringable
     {
         $array = (array) json_decode($this->response, true, 512, JSON_THROW_ON_ERROR);
 
-        if (isset($array['data']) && is_array($array['data']) && isset($this->payment)) {
+        if (isset($array['data']) && is_array($array['data']) && isset($this->payment) && ! empty($this->payment->id)) {
             $array['data']['payment_id'] = $this->payment->id;
         }
 

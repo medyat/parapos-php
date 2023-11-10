@@ -7,6 +7,7 @@ namespace MedyaT\Parapos;
 use MedyaT\Parapos\Config\Config;
 use MedyaT\Parapos\Services\CardService;
 use MedyaT\Parapos\Services\PaymentService;
+use MedyaT\Parapos\Services\PosService;
 
 final class Parapos
 {
@@ -30,5 +31,10 @@ final class Parapos
     public function card(): CardService
     {
         return new CardService($this->config);
+    }
+
+    public function pos(): PosService
+    {
+        return new PosService($this->config);
     }
 }

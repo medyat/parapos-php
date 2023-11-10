@@ -10,3 +10,4 @@
 /.idea
 /.vscode
 /tests/Unit/RealApiTest.php
+/.env

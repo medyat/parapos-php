@@ -50,6 +50,7 @@ final class PaymentPay3dMiddleware
 
         if (isset($request->params['card_number'])) {
             $request->payment->last_four = substr((string) $request->params['card_number'], -4);
+            $request->payment->bin = substr((string) $request->params['card_number'], 0, 6);
         }
 
         if (isset($request->params['currency_code'])) {

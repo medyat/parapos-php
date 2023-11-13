@@ -108,6 +108,7 @@ final class PaymentService extends Service
         int $reference_id = null,
         string $currency_code = 'TRY',
         int $installment = 1,
+        float $ratio = 0,
         int $foreign_id_1 = null,
         int $foreign_id_2 = null,
         int $foreign_id_3 = null,
@@ -116,6 +117,7 @@ final class PaymentService extends Service
         $this->payment->ip = $client_ip;
         $this->payment->amount = $amount;
         $this->payment->installment = $installment;
+        $this->payment->ratio = $ratio;
         $this->payment->currency_code = $currency_code;
         $this->payment->user_id = $user_id;
         $this->payment->reference_id = $reference_id;

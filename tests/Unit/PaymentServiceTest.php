@@ -30,7 +30,8 @@ it('can test pay3d', function () {
             amount: 123.45,
             user_id: 1,
             reference_id: 55,
-            installment: 2
+            installment: 2,
+            ratio: 1.55
         )
         ->addDealerAmount(
             dealer_id: 1,
@@ -50,6 +51,9 @@ it('can test pay3d', function () {
 
     expect($db_payment->installment)
         ->toEqual(2);
+
+    expect($db_payment->ratio)
+        ->toEqual(1.55);
 
     expect($response)
         ->toHaveKeys(['parapos_code', 'url']);

@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $currency_code
  * @property string $last_four
  * @property int $installment
+ * @property float $ratio
  * @property int $status
  * @property ?int $reference_id
  * @property ?int $foreign_id_1

@@ -46,7 +46,7 @@ final class PaymentService extends Service
             'installment' => $this->payment->installment,
             'amount' => $this->payment->amount,
             'client_ip' => $this->payment->ip,
-            'client_order_id' => $this->payment->response_hash,
+            'client_order_id' => $this->payment->request_code ?? $this->payment->response_hash,
             'success_url' => $this->config->getResponseUrl($this->payment->response_hash),
             'fail_url' => $this->config->getResponseUrl($this->payment->response_hash),
         ];

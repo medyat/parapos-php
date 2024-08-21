@@ -22,6 +22,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property ?int $foreign_id_2
  * @property ?int $foreign_id_3
  * @property ?int $user_id
+ * @property ?string $request_code
+ * @property ?string $response_code
  */
 final class Payment extends Model
 {

@@ -8,7 +8,7 @@ use MedyaT\Parapos\Services\PosService;
 
 it('pos service methods', function () {
 
-    $parapos = new Parapos();
+    $parapos = new Parapos;
 
     $posService = $parapos->pos();
 
@@ -54,12 +54,12 @@ it('can pos service', function () {
         ],
     ];
 
-    $http = Mockery::mock('\MedyaT\Parapos\Config\Http[call]', [$config = new Config()]);
+    $http = Mockery::mock('\MedyaT\Parapos\Config\Http[call]', [$config = new Config]);
 
     $http
         ->shouldReceive('call')
         ->with(Payment::class, 'pos/active', 'GET', [], [])
-        ->andReturn(new HttpResponse(payment: new Payment(), response: json_encode($response)));
+        ->andReturn(new HttpResponse(payment: new Payment, response: json_encode($response)));
 
     $posService = new PosService($config, $http);
 

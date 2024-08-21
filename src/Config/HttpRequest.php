@@ -10,10 +10,7 @@ final class HttpRequest implements \Stringable
      * @param  string[]  $headers
      * @param  mixed[]  $params
      */
-    public function __construct(public Payment $payment, public string $uri, public string $method, public array $headers, public array $params = [])
-    {
-
-    }
+    public function __construct(public Payment $payment, public string $uri, public string $method, public array $headers, public array $params = []) {}
 
     public function __toString(): string
     {

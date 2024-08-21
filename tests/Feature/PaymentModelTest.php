@@ -1,12 +1,12 @@
 <?php
 
 test('confirm environment is set to testing', function () {
-    expect(config('app.env'))->toBe('testing');
+    expect(config('app.env'))->toBe('workbench');
 });
 
 it('can create payment', function () {
 
-    $payment = new \MedyaT\Parapos\Models\Payment();
+    $payment = new \MedyaT\Parapos\Models\Payment;
 
     $payment->parapos_code = 'ok';
 

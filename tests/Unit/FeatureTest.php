@@ -8,7 +8,7 @@ use MedyaT\Parapos\Parapos;
 
 it('can generate test api url', function () {
 
-    $parapos = new Parapos();
+    $parapos = new Parapos;
 
     expect($parapos->config->isTest)
         ->toBe(true)
@@ -66,14 +66,14 @@ it('can mock http client', function () {
 
     $http = Mockery::mock(Http::class);
 
-    $payment = new Payment();
+    $payment = new Payment;
     $payment->save();
 
     $http->shouldReceive('get')
         ->with($payment, 'https://api.parapos.com')
         ->andReturn(new HttpResponse($payment, 'test'));
 
-    $config = new Config();
+    $config = new Config;
 
     $service = new \MedyaT\Parapos\Services\PaymentService($config, $http);
 

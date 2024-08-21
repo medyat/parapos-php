@@ -9,7 +9,7 @@ use MedyaT\Parapos\Services\CardService;
 
 it('installemt service methods', function () {
 
-    $parapos = new Parapos();
+    $parapos = new Parapos;
 
     $installmentService = $parapos->card();
 
@@ -22,7 +22,7 @@ it('installemt service methods', function () {
 it('can mock http client for bin', function () {
 
     // mock http client
-    $http = Mockery::mock('\MedyaT\Parapos\Config\Http[call]', [$config = new Config()]);
+    $http = Mockery::mock('\MedyaT\Parapos\Config\Http[call]', [$config = new Config]);
 
     $payment = new Payment(['status' => Payment::PAYMENT_PENDING]);
     $payment->save();
@@ -46,9 +46,9 @@ it('can mock http client for bin', function () {
 
 it('can make request for installment method anothers', function () {
 
-    $http = Mockery::mock('\MedyaT\Parapos\Config\Http[call]', [$config = new Config()]);
+    $http = Mockery::mock('\MedyaT\Parapos\Config\Http[call]', [$config = new Config]);
 
-    $payment = new Payment();
+    $payment = new Payment;
     $payment->save();
 
     $http
@@ -69,9 +69,9 @@ it('can make request for installment method anothers', function () {
 
 it('can make request for installment method with sub amounts', function () {
 
-    $http = Mockery::mock('\MedyaT\Parapos\Config\Http[call]', [$config = new Config()]);
+    $http = Mockery::mock('\MedyaT\Parapos\Config\Http[call]', [$config = new Config]);
 
-    $payment = new Payment();
+    $payment = new Payment;
     $payment->save();
 
     $http

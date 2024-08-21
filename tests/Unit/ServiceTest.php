@@ -8,14 +8,14 @@ it('can mock http client', function () {
 
     $http = Mockery::mock(Http::class);
 
-    $payment = new \MedyaT\Parapos\Models\Payment();
+    $payment = new \MedyaT\Parapos\Models\Payment;
     $payment->save();
 
     $http->shouldReceive('get')
         ->with($payment, 'https://api.parapos.com')
         ->andReturn(new \MedyaT\Parapos\Config\HttpResponse($payment, 'test'));
 
-    $config = new Config();
+    $config = new Config;
 
     $service = new PaymentService($config, $http);
 
@@ -29,7 +29,7 @@ it('can mock http client', function () {
 
 it('can add middleware string', function () {
 
-    $service = new PaymentService(new Config());
+    $service = new PaymentService(new Config);
 
     expect($service->http->middlewares)
         ->toBeArray()
@@ -45,7 +45,7 @@ it('can add middleware string', function () {
 
 it('can add middleware closure', function () {
 
-    $service = new PaymentService(new Config());
+    $service = new PaymentService(new Config);
 
     expect($service->http->middlewares)
         ->toBeArray()

@@ -8,14 +8,14 @@ use MedyaT\Parapos\Services\CardService;
 
 it('can payment with bin request', function () {
 
-    $http = Mockery::mock('\MedyaT\Parapos\Config\Http[call]', [$config = new Config()]);
+    $http = Mockery::mock('\MedyaT\Parapos\Config\Http[call]', [$config = new Config]);
 
     $firstPayment = \MedyaT\Parapos\Models\Payment::create([
         'amount' => 100,
         'installment' => 1,
     ]);
 
-    $payment = new Payment();
+    $payment = new Payment;
     $payment->save();
 
     $http
@@ -51,9 +51,9 @@ it('can payment with bin request', function () {
 
 it('can update payment with installments request', function () {
 
-    $http = Mockery::mock('\MedyaT\Parapos\Config\Http[call]', [$config = new Config()]);
+    $http = Mockery::mock('\MedyaT\Parapos\Config\Http[call]', [$config = new Config]);
 
-    $paymentDb = new Payment();
+    $paymentDb = new Payment;
     $paymentDb->save();
 
     $payment = \MedyaT\Parapos\Models\Payment::create([

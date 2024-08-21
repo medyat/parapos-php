@@ -22,7 +22,7 @@ final class Config
 
     public string $response_url = 'parapos/response/{hash}';
 
-    private function setApiUrl(string $url = null): void
+    private function setApiUrl(?string $url = null): void
     {
         if ($url) {
             $this->apiUrl = rtrim($url, '/');

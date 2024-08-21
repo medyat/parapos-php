@@ -4,7 +4,7 @@ use MedyaT\Parapos\Rules\MoneyRule;
 
 it('can test money rule', function () {
 
-    $rule = new MoneyRule();
+    $rule = new MoneyRule;
 
     $messageBag = [];
 

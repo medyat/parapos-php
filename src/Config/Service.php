@@ -8,7 +8,7 @@ abstract class Service
 {
     public Http $http;
 
-    final public function __construct(public Config $config, Http $http = null)
+    final public function __construct(public Config $config, ?Http $http = null)
     {
         $this->http = $http ?? new Http($this->config);
     }

@@ -6,7 +6,7 @@ use MedyaT\Parapos\Models\Payment;
 
 final class FindOrNewPaymentAction
 {
-    public function __invoke(int $payment_id = null): Payment
+    public function __invoke(?int $payment_id = null): Payment
     {
 
         $payment = new Payment(['status' => Payment::PAYMENT_PENDING]);

@@ -9,7 +9,7 @@ use Tests\TestMiddleware;
 
 it('test constructor injection', function () {
 
-    $service = new Config();
+    $service = new Config;
     $httpClient = new Http($service);
 
     expect($httpClient)
@@ -21,11 +21,11 @@ it('test constructor injection', function () {
 
 it('test get request', function () {
 
-    $httpClient = Mockery::mock('\MedyaT\Parapos\Config\Http[call]', [new Config()]);
+    $httpClient = Mockery::mock('\MedyaT\Parapos\Config\Http[call]', [new Config]);
 
     $url = 'https://example.com';
 
-    $payment = new Payment();
+    $payment = new Payment;
     $payment->save();
 
     $httpClient
@@ -46,11 +46,11 @@ it('test get request', function () {
 
 it('test post request', function () {
 
-    $httpClient = Mockery::mock('\MedyaT\Parapos\Config\Http[call]', [new Config()]);
+    $httpClient = Mockery::mock('\MedyaT\Parapos\Config\Http[call]', [new Config]);
 
     $url = 'https://example.com';
 
-    $payment = new Payment();
+    $payment = new Payment;
     $payment->save();
 
     $httpClient
@@ -70,11 +70,11 @@ it('test post request', function () {
 
 it('test put request', function () {
 
-    $httpClient = Mockery::mock('\MedyaT\Parapos\Config\Http[call]', [new Config()]);
+    $httpClient = Mockery::mock('\MedyaT\Parapos\Config\Http[call]', [new Config]);
 
     $url = 'https://example.com';
 
-    $payment = new Payment();
+    $payment = new Payment;
     $payment->save();
 
     $httpClient
@@ -94,11 +94,11 @@ it('test put request', function () {
 
 it('test delete request', function () {
 
-    $httpClient = Mockery::mock('\MedyaT\Parapos\Config\Http[call]', [new Config()]);
+    $httpClient = Mockery::mock('\MedyaT\Parapos\Config\Http[call]', [new Config]);
 
     $url = 'https://example.com';
 
-    $payment = new Payment();
+    $payment = new Payment;
     $payment->save();
 
     $httpClient
@@ -118,7 +118,7 @@ it('test delete request', function () {
 
 it('test add middleware method', function () {
 
-    $httpClient = new Http(new Config());
+    $httpClient = new Http(new Config);
 
     $httpClient->addMiddleware(function ($request, $next) {
         return $next($request);
@@ -143,11 +143,11 @@ it('test add middleware method', function () {
 
 it('test middleware closure', function () {
 
-    $httpClient = Mockery::mock('\MedyaT\Parapos\Config\Http[call]', [new Config()]);
+    $httpClient = Mockery::mock('\MedyaT\Parapos\Config\Http[call]', [new Config]);
 
     $url = 'https://example.com';
 
-    $payment = new Payment();
+    $payment = new Payment;
     $payment->save();
 
     $httpClient
@@ -183,11 +183,11 @@ it('test middleware closure', function () {
 
 it('test middleware class', function () {
 
-    $httpClient = Mockery::mock('\MedyaT\Parapos\Config\Http[call]', [new Config()]);
+    $httpClient = Mockery::mock('\MedyaT\Parapos\Config\Http[call]', [new Config]);
 
     $url = 'https://example.com';
 
-    $payment = new Payment();
+    $payment = new Payment;
     $payment->save();
 
     $httpClient

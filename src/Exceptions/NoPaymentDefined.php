@@ -2,6 +2,4 @@
 
 namespace MedyaT\Parapos\Exceptions;
 
-final class NoPaymentDefined extends \Exception
-{
-}
+final class NoPaymentDefined extends \Exception {}

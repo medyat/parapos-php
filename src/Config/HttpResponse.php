@@ -7,9 +7,7 @@ use MedyaT\Parapos\Models\Payment;
 final class HttpResponse implements \Stringable
 {
     /** @param  mixed[]  $headers */
-    public function __construct(public Payment $payment, public string $response, public array $headers = [])
-    {
-    }
+    public function __construct(public Payment $payment, public string $response, public array $headers = []) {}
 
     public function __toString(): string
     {

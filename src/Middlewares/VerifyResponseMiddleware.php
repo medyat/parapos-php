@@ -10,8 +10,5 @@ final class VerifyResponseMiddleware implements VerifyResponseMiddlewareInterfac
     /**
      * @return mixed
      */
-    public function __invoke(Request $request, Payment $payment)
-    {
-
-    }
+    public function __invoke(Request $request, Payment $payment) {}
 }

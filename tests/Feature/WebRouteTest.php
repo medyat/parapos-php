@@ -47,7 +47,7 @@ it('can test web two variables route', function () {
 
 it('can test web route', function () {
 
-    $payment = new Payment();
+    $payment = new Payment;
     $payment->response_hash = 'asd';
     $payment->status = Payment::PAYMENT_PENDING;
     $payment->save();

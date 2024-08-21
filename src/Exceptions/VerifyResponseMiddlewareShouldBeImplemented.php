@@ -2,6 +2,4 @@
 
 namespace MedyaT\Parapos\Exceptions;
 
-final class VerifyResponseMiddlewareShouldBeImplemented extends \Exception
-{
-}
+final class VerifyResponseMiddlewareShouldBeImplemented extends \Exception {}

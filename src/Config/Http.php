@@ -12,10 +12,7 @@ final class Http
     /**
      * @param  string[]|Closure[]  $middlewares
      */
-    final public function __construct(public Config $config, public array $middlewares = [])
-    {
-
-    }
+    final public function __construct(public Config $config, public array $middlewares = []) {}
 
     /**
      * @param  string[]  $headers
@@ -70,7 +67,7 @@ final class Http
         foreach ($this->middlewares as $middleware) {
 
             if (is_string($middleware)) {
-                $middleware = new $middleware();
+                $middleware = new $middleware;
 
             }
 

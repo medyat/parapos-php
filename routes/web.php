@@ -22,7 +22,7 @@ Route::post('parapos/response/{hash}/{tenant?}', function (Request $request, $ha
     foreach ($middlewares as $middleware) {
         $middleware = new $middleware;
         if (! in_array(VerifyResponseMiddlewareInterface::class, class_implements($middleware))) {
-            throw new VerifyResponseMiddlewareShouldBeImplemented();
+            throw new VerifyResponseMiddlewareShouldBeImplemented;
         }
         $middleware($request, $payment);
     }

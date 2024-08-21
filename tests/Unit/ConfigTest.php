@@ -32,7 +32,7 @@ it('can get api url with trailing slash uri', function () {
 
 it('can get marketplace default value', function () {
 
-    $config = new Config();
+    $config = new Config;
 
     expect($config->isMarketplace)
         ->toBeFalse();
@@ -61,7 +61,7 @@ it('can get api url with no slash uri', function () {
 
 it('can get default test url with no slash uri', function () {
 
-    $config = new Config();
+    $config = new Config;
 
     expect($config->getApiUrl('bin'))
         ->toBeString()

@@ -14,6 +14,6 @@ final class PosService extends Service
      */
     public function getRatios(): array
     {
-        return $this->http->get(payment: new Payment(), uri: 'pos/active')->toArray();
+        return $this->http->get(payment: new Payment, uri: 'pos/active')->toArray();
     }
 }

@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
             $table->string('parapos_code')->nullable();
+            $table->string('request_code')->nullable();
+            $table->string('response_code')->nullable();
             $table->unsignedTinyInteger('status')->default(1);
             $table->unsignedInteger('user_id')->nullable();
             $table->unsignedInteger('reference_id')->nullable();

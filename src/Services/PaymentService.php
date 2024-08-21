@@ -29,11 +29,11 @@ final class PaymentService extends Service
     public function pay3d(): array
     {
         if (! isset($this->card)) {
-            throw new NoCreditCardDefined();
+            throw new NoCreditCardDefined;
         }
 
         if (! isset($this->payment)) {
-            throw new NoPaymentDefined();
+            throw new NoPaymentDefined;
         }
 
         $params = [
@@ -103,17 +103,19 @@ final class PaymentService extends Service
     public function addPayment(
         string $client_ip,
         float $amount,
-        int $payment_id = null,
-        int $user_id = null,
-        int $reference_id = null,
+        ?int $payment_id = null,
+        ?int $user_id = null,
+        ?int $reference_id = null,
         string $currency_code = 'TRY',
         int $installment = 1,
         float $ratio = 0,
-        int $foreign_id_1 = null,
-        int $foreign_id_2 = null,
-        int $foreign_id_3 = null,
+        ?int $foreign_id_1 = null,
+        ?int $foreign_id_2 = null,
+        ?int $foreign_id_3 = null,
+        ?string $request_code = null,
+        ?string $response_code = null
     ): self {
-        $this->payment = (new FindOrNewPaymentAction())($payment_id);
+        $this->payment = (new FindOrNewPaymentAction)($payment_id);
         $this->payment->ip = $client_ip;
         $this->payment->amount = $amount;
         $this->payment->installment = $installment;
@@ -124,6 +126,8 @@ final class PaymentService extends Service
         $this->payment->foreign_id_1 = $foreign_id_1;
         $this->payment->foreign_id_2 = $foreign_id_2;
         $this->payment->foreign_id_3 = $foreign_id_3;
+        $this->payment->request_code = $request_code;
+        $this->payment->response_code = $response_code;
         $this->payment->save();
 
         return $this;

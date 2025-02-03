@@ -113,7 +113,8 @@ final class PaymentService extends Service
         ?int $foreign_id_2 = null,
         ?int $foreign_id_3 = null,
         ?string $request_code = null,
-        ?string $response_code = null
+        ?string $response_code = null,
+        ?string $description = null
     ): self {
         $this->payment = (new FindOrNewPaymentAction)($payment_id);
         $this->payment->ip = $client_ip;
@@ -128,6 +129,7 @@ final class PaymentService extends Service
         $this->payment->foreign_id_3 = $foreign_id_3;
         $this->payment->request_code = $request_code;
         $this->payment->response_code = $response_code;
+        $this->payment->description = $description;
         $this->payment->save();
 
         return $this;

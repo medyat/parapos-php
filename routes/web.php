@@ -8,7 +8,7 @@ use MedyaT\Parapos\Models\Payment;
 
 Route::post('parapos/response/{hash}/{tenant?}', function (Request $request, $hash, $tenant = null) {
 
-    $payment = Payment::where('response_hash', $hash)->firstOrFail();
+    $payment = Payment::where('response_hash', $hash)->where('status', Payment::PAYMENT_PENDING)->firstOrFail();
 
     $resultCode = $request->get('result_code');
     $resultMessage = $request->get('result_message');
@@ -21,7 +21,7 @@ Route::post('parapos/response/{hash}/{tenant?}', function (Request $request, $ha
 
     foreach ($middlewares as $middleware) {
         $middleware = new $middleware;
-        if (! in_array(VerifyResponseMiddlewareInterface::class, class_implements($middleware))) {
+        if (!in_array(VerifyResponseMiddlewareInterface::class, class_implements($middleware))) {
             throw new VerifyResponseMiddlewareShouldBeImplemented;
         }
         $middleware($request, $payment);

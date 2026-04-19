@@ -11,3 +11,4 @@
 /.vscode
 /tests/Unit/RealApiTest.php
 /.env
+.DS_Store

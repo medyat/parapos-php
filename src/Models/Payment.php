@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $installment
  * @property float $ratio
  * @property int $status
+ * @property int $is_pre_auth
  * @property ?int $reference_id
  * @property ?int $foreign_id_1
  * @property ?int $foreign_id_2
@@ -33,6 +34,14 @@ final class Payment extends Model
     public const PAYMENT_PENDING = 1;
 
     public const PAYMENT_FAIL = 2;
+
+    public const PAYMENT_PRE_AUTHORIZED = 3;
+
+    public const PAYMENT_PRE_AUTH_CANCELLED = 4;
+
+    public const PAYMENT_PRE_AUTH_CANCEL_FAILED = 5;
+
+    public const PAYMENT_PRE_AUTH_CANCEL_ABANDONED = 6;
 
     protected $guarded = ['id'];
 

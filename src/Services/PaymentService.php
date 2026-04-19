@@ -28,6 +28,85 @@ final class PaymentService extends Service
      */
     public function pay3d(): array
     {
+        return $this->pay3dRequest('pay_3d');
+    }
+
+    /**
+     * @return array{parapos_code: mixed, url: mixed}
+     */
+    public function pay3dPreAuth(): array
+    {
+        if (! isset($this->card)) {
+            throw new NoCreditCardDefined;
+        }
+
+        if (! isset($this->payment)) {
+            throw new NoPaymentDefined;
+        }
+
+        $this->payment->is_pre_auth = 1;
+        $this->payment->save();
+
+        return $this->pay3dRequest('pay_3d_pre_auth');
+    }
+
+    /**
+     * @return array{result_code: mixed, result_message: mixed}
+     */
+    public function pay3dPostAuth(): array
+    {
+        if (! isset($this->payment)) {
+            throw new NoPaymentDefined;
+        }
+
+        $params = [
+            'payment_id' => $this->payment->parapos_code,
+        ];
+
+        if (! empty($this->dealer_amounts)) {
+            $params['sub_dealers'] = $this->dealer_amounts;
+        }
+
+        $result = $this->http->post(payment: $this->payment, uri: 'pay_3d_post_auth', params: $params)->toArray();
+
+        return [
+            'result_code' => Arr::get($result, 'result_code'),
+            'result_message' => Arr::get($result, 'result_message'),
+        ];
+    }
+
+    /**
+     * @return array{status: int, result_code: mixed, result_message: mixed}
+     */
+    public function checkStatus(): array
+    {
+        if (! isset($this->payment)) {
+            throw new NoPaymentDefined;
+        }
+
+        $params = [
+            'client_order_id' => $this->payment->request_code ?? $this->payment->response_hash,
+        ];
+
+        $result = $this->http->post(payment: $this->payment, uri: 'payment_status', params: $params)->toArray();
+
+        $status = (int) Arr::get($result, 'data.status');
+
+        $this->payment->status = $status;
+        $this->payment->save();
+
+        return [
+            'status' => $status,
+            'result_code' => Arr::get($result, 'result_code'),
+            'result_message' => Arr::get($result, 'result_message'),
+        ];
+    }
+
+    /**
+     * @return array{parapos_code: mixed, url: mixed}
+     */
+    private function pay3dRequest(string $uri): array
+    {
         if (! isset($this->card)) {
             throw new NoCreditCardDefined;
         }
@@ -57,7 +136,7 @@ final class PaymentService extends Service
 
         $this->middleware(PaymentPay3dMiddleware::class);
 
-        $result = $this->http->post(payment: $this->payment, uri: 'pay_3d', params: $params)->toArray();
+        $result = $this->http->post(payment: $this->payment, uri: $uri, params: $params)->toArray();
 
         return [
             'parapos_code' => Arr::get($result, 'data.id'),

@@ -26,6 +26,7 @@ return new class extends Migration
             $table->string('card_code', 100)->nullable();
             $table->string('bank_code', 100)->nullable();
             $table->tinyInteger('is_foreign_card')->default(0);
+            $table->unsignedTinyInteger('is_pre_auth')->default(0);
             $table->decimal('ratio')->default(0.00);
             $table->decimal('amount', 11, 2)->unsigned()->default(0.00);
             $table->string('name', 50)->nullable();

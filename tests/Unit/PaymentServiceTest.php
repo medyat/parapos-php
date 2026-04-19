@@ -14,6 +14,8 @@ it('payment needs to have bin method', function () {
 });
 
 it('can test pay3d', function () {
+    $this->markTestSkipped('Hits the real Parapos test API; run manually.');
+
 
     $parapos = new Parapos(['apiUrl' => 'https://app-test.parapos.com/api', 'secretKey' => '21VEyjUYlsYHnuKo3qCSN2y14vG2Oz7FoS1Sra5x']);
 

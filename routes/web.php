@@ -13,15 +13,19 @@ Route::post('parapos/response/{hash}/{tenant?}', function (Request $request, $ha
     $resultCode = $request->get('result_code');
     $resultMessage = $request->get('result_message');
 
-    $payment->status = $resultCode === 'OK'
-        ? Payment::PAYMENT_SUCCESS
-        : Payment::PAYMENT_FAIL;
+    if ($resultCode === 'OK' && $payment->is_pre_auth) {
+        $payment->status = Payment::PAYMENT_PRE_AUTHORIZED;
+    } elseif ($resultCode === 'OK') {
+        $payment->status = Payment::PAYMENT_SUCCESS;
+    } else {
+        $payment->status = Payment::PAYMENT_FAIL;
+    }
 
     $middlewares = config('parapos.response_middlewares', []);
 
     foreach ($middlewares as $middleware) {
         $middleware = new $middleware;
-        if (!in_array(VerifyResponseMiddlewareInterface::class, class_implements($middleware))) {
+        if (! in_array(VerifyResponseMiddlewareInterface::class, class_implements($middleware))) {
             throw new VerifyResponseMiddlewareShouldBeImplemented;
         }
         $middleware($request, $payment);

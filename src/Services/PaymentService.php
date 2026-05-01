@@ -24,17 +24,15 @@ final class PaymentService extends Service
     public array $dealer_amounts = [];
 
     /**
+     * Start a 3D payment. Flags compose orthogonally:
+     *   is_pre_auth = false, auto_complete = true  -> legacy 3DPay (verify + charge)
+     *   is_pre_auth = false, auto_complete = false -> 3D Model (verify, then pay3dComplete)
+     *   is_pre_auth = true,  auto_complete = true  -> 3DPay-style pre-auth (verify + hold), then pay3dPostAuth
+     *   is_pre_auth = true,  auto_complete = false -> two-step pre-auth (verify, complete=hold, then post_auth)
+     *
      * @return array{parapos_code: mixed, url: mixed}
      */
-    public function pay3d(): array
-    {
-        return $this->pay3dRequest('pay_3d');
-    }
-
-    /**
-     * @return array{parapos_code: mixed, url: mixed}
-     */
-    public function pay3dPreAuth(): array
+    public function pay3dInit(): array
     {
         if (! isset($this->card)) {
             throw new NoCreditCardDefined;
@@ -44,10 +42,31 @@ final class PaymentService extends Service
             throw new NoPaymentDefined;
         }
 
-        $this->payment->is_pre_auth = 1;
-        $this->payment->save();
+        return $this->pay3dRequest('pay_3d_init');
+    }
 
-        return $this->pay3dRequest('pay_3d_pre_auth');
+    /**
+     * Complete a 3D-Model payment (auto_complete = false). Charges the card after
+     * the customer has finished 3D verification.
+     *
+     * @return array{result_code: mixed, result_message: mixed}
+     */
+    public function pay3dComplete(): array
+    {
+        if (! isset($this->payment)) {
+            throw new NoPaymentDefined;
+        }
+
+        $params = [
+            'payment_id' => $this->payment->parapos_code,
+        ];
+
+        $result = $this->http->post(payment: $this->payment, uri: 'pay_3d_complete', params: $params)->toArray();
+
+        return [
+            'result_code' => Arr::get($result, 'result_code'),
+            'result_message' => Arr::get($result, 'result_message'),
+        ];
     }
 
     /**
@@ -107,14 +126,6 @@ final class PaymentService extends Service
      */
     private function pay3dRequest(string $uri): array
     {
-        if (! isset($this->card)) {
-            throw new NoCreditCardDefined;
-        }
-
-        if (! isset($this->payment)) {
-            throw new NoPaymentDefined;
-        }
-
         $params = [
             'card_number' => $this->card->card_number,
             'name' => $this->card->name,
@@ -128,6 +139,8 @@ final class PaymentService extends Service
             'client_order_id' => $this->payment->request_code ?? $this->payment->response_hash,
             'success_url' => $this->config->getResponseUrl($this->payment->response_hash),
             'fail_url' => $this->config->getResponseUrl($this->payment->response_hash),
+            'is_pre_auth' => (int) $this->payment->is_pre_auth,
+            'auto_complete' => (int) $this->payment->auto_complete,
         ];
 
         if ($this->config->isMarketplace) {
@@ -193,7 +206,9 @@ final class PaymentService extends Service
         ?int $foreign_id_3 = null,
         ?string $request_code = null,
         ?string $response_code = null,
-        ?string $description = null
+        ?string $description = null,
+        bool $is_pre_auth = false,
+        bool $auto_complete = false
     ): self {
         $this->payment = (new FindOrNewPaymentAction)($payment_id);
         $this->payment->ip = $client_ip;
@@ -209,6 +224,8 @@ final class PaymentService extends Service
         $this->payment->request_code = $request_code;
         $this->payment->response_code = $response_code;
         $this->payment->description = $description;
+        $this->payment->is_pre_auth = $is_pre_auth ? 1 : 0;
+        $this->payment->auto_complete = $auto_complete ? 1 : 0;
         $this->payment->save();
 
         return $this;

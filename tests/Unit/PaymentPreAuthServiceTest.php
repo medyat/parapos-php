@@ -7,18 +7,18 @@ use MedyaT\Parapos\Models\Payment;
 use MedyaT\Parapos\Parapos;
 use MedyaT\Parapos\Services\PaymentService;
 
-it('payment service has pay3dPreAuth and pay3dPostAuth methods', function () {
+it('payment service has pay3dInit and pay3dPostAuth methods', function () {
 
     $parapos = new Parapos(['apiUrl' => 'https://bayi.biz']);
 
     $payment = $parapos->payment();
 
     expect($payment)
-        ->toHaveMethods(['pay3dPreAuth', 'pay3dPostAuth']);
+        ->toHaveMethods(['pay3dInit', 'pay3dPostAuth']);
 
 });
 
-it('pay3dPreAuth posts to pay_3d_pre_auth endpoint', function () {
+it('pay3dInit with is_pre_auth posts to pay_3d_init endpoint and flags pre-auth', function () {
 
     $httpClient = Mockery::mock('\MedyaT\Parapos\Config\Http[call]', [new Config]);
 
@@ -37,9 +37,10 @@ it('pay3dPreAuth posts to pay_3d_pre_auth endpoint', function () {
     $httpClient->shouldReceive('call')
         ->once()
         ->withArgs(function ($p, $uri, $method, $headers, $params) {
-            return $uri === 'pay_3d_pre_auth'
+            return $uri === 'pay_3d_init'
                 && $method === 'POST'
-                && $params['card_number'] === '5269 5511 2222 3339';
+                && $params['card_number'] === '5269 5511 2222 3339'
+                && (int) $params['is_pre_auth'] === 1;
         })
         ->andReturn(new HttpResponse($payment, $responseData, ['http_code' => 200]));
 
@@ -58,16 +59,16 @@ it('pay3dPreAuth posts to pay_3d_pre_auth endpoint', function () {
         client_ip: '127.0.0.1',
         amount: 100.00,
         installment: 1,
+        is_pre_auth: true,
     );
 
-    $result = $service->pay3dPreAuth();
+    $result = $service->pay3dInit();
 
     expect($result)
         ->toHaveKeys(['parapos_code', 'url'])
         ->and($result['parapos_code'])->toBe(123)
         ->and($result['url'])->toBe('https://service.testmoka.com/abc');
 
-    // Verify payment is marked as pre-auth
     expect((int) $service->payment->is_pre_auth)->toBe(1);
 
     Mockery::close();
@@ -172,7 +173,7 @@ it('pay3dPostAuth throws exception when no payment is set', function () {
 
 })->throws(\MedyaT\Parapos\Exceptions\NoPaymentDefined::class);
 
-it('pay3dPreAuth throws exception when no card is set', function () {
+it('pay3dInit throws exception when no card is set', function () {
 
     $config = new Config;
     $service = new PaymentService($config);
@@ -180,13 +181,14 @@ it('pay3dPreAuth throws exception when no card is set', function () {
     $service->addPayment(
         client_ip: '127.0.0.1',
         amount: 100.00,
+        is_pre_auth: true,
     );
 
-    $service->pay3dPreAuth();
+    $service->pay3dInit();
 
 })->throws(\MedyaT\Parapos\Exceptions\NoCreditCardDefined::class);
 
-it('pay3dPreAuth throws exception when no payment is set', function () {
+it('pay3dInit throws exception when no payment is set', function () {
 
     $config = new Config;
     $service = new PaymentService($config);
@@ -199,7 +201,7 @@ it('pay3dPreAuth throws exception when no payment is set', function () {
         expire_date_year: '2025'
     );
 
-    $service->pay3dPreAuth();
+    $service->pay3dInit();
 
 })->throws(\MedyaT\Parapos\Exceptions\NoPaymentDefined::class);
 

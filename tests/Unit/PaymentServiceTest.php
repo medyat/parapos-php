@@ -9,13 +9,12 @@ it('payment needs to have bin method', function () {
     $payment = $parapos->payment();
 
     expect($payment)
-        ->toHaveMethods(['pay3d']);
+        ->toHaveMethods(['pay3dInit']);
 
 });
 
-it('can test pay3d', function () {
+it('can test pay3dInit', function () {
     $this->markTestSkipped('Hits the real Parapos test API; run manually.');
-
 
     $parapos = new Parapos(['apiUrl' => 'https://app-test.parapos.com/api', 'secretKey' => '21VEyjUYlsYHnuKo3qCSN2y14vG2Oz7FoS1Sra5x']);
 
@@ -43,7 +42,7 @@ it('can test pay3d', function () {
             dealer_commission_amount: 0,
         );
 
-    $response = $parapos->pay3d();
+    $response = $parapos->pay3dInit();
 
     $db_payment = \MedyaT\Parapos\Models\Payment::find($parapos->payment->id);
 

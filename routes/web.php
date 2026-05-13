@@ -42,7 +42,7 @@ Route::post('parapos/response/{hash}/{tenant?}', function (Request $request, $ha
         'id' => $payment->id,
         'hash' => $payment->response_hash,
         'result_code' => $finalResultCode,
-        'result_message' => $resultMessage,
+        'result_message' => $payment->result_message ?? $resultMessage,
     ]);
 
 })

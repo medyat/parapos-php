@@ -33,6 +33,7 @@ return new class extends Migration
             $table->string('name', 50)->nullable();
             $table->string('bin', 8)->nullable();
             $table->text('description')->nullable();
+            $table->string('result_message', 255)->nullable();
             $table->unsignedInteger('foreign_id_1')->nullable();
             $table->unsignedInteger('foreign_id_2')->nullable();
             $table->unsignedInteger('foreign_id_3')->nullable();

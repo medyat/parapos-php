@@ -27,6 +27,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property ?string $request_code
  * @property ?string $response_code
  * @property ?string $description
+ * @property ?string $result_message
  */
 final class Payment extends Model
 {

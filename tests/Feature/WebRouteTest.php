@@ -57,12 +57,12 @@ it('can test web route', function () {
     expect($route)->toBe('parapos/response/{hash}/{tenant?}');
 
     $this->post('/parapos/response/'.$payment->response_hash, [
-        'result_code' => $code = '1024523049834095',
+        'result_code' => '1024523049834095',
         'result_message' => $message = 'this is fail message',
     ])
         ->assertSee('paymentResponse')
         ->assertSee($message)
-        ->assertSee($code)
+        ->assertSee("'result_code': 'FAIL'", false)
         ->assertOk();
 
     $payment->refresh();

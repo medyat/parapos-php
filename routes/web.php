@@ -33,10 +33,15 @@ Route::post('parapos/response/{hash}/{tenant?}', function (Request $request, $ha
 
     $payment->save();
 
+    $finalResultCode = match ($payment->status) {
+        Payment::PAYMENT_SUCCESS, Payment::PAYMENT_PRE_AUTHORIZED => 'OK',
+        default => 'FAIL',
+    };
+
     return view(config('parapos.view', 'parapos::response'), [
         'id' => $payment->id,
         'hash' => $payment->response_hash,
-        'result_code' => $resultCode,
+        'result_code' => $finalResultCode,
         'result_message' => $resultMessage,
     ]);
 

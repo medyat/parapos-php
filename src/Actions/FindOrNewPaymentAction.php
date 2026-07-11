@@ -2,23 +2,26 @@
 
 namespace MedyaT\Parapos\Actions;
 
+use Illuminate\Database\Eloquent\Model;
+use MedyaT\Parapos\Contracts\PaymentStatus;
 use MedyaT\Parapos\Models\Payment;
 
 final class FindOrNewPaymentAction
 {
-    public function __invoke(?int $payment_id = null): Payment
+    public function __invoke(int|string|null $payment_id = null): Model
     {
+        /** @var class-string<Model> $model */
+        $model = config('parapos.model', Payment::class);
 
-        $payment = new Payment(['status' => Payment::PAYMENT_PENDING]);
+        $payment = new $model(['status' => PaymentStatus::PAYMENT_PENDING]);
 
         if (! is_null($payment_id)) {
 
-            $paymentFromDb = Payment::query()
+            $paymentFromDb = $model::query()
                 ->where('id', $payment_id)
-                ->where('status', Payment::PAYMENT_PENDING)->first();
+                ->where('status', PaymentStatus::PAYMENT_PENDING)->first();
 
             if (! is_null($paymentFromDb)) {
-                /** @var Payment $payment */
                 $payment = $paymentFromDb;
             }
         }

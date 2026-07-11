@@ -3,12 +3,12 @@
 namespace MedyaT\Parapos\Middlewares;
 
 use Illuminate\Http\Request;
-use MedyaT\Parapos\Models\Payment;
+use Illuminate\Database\Eloquent\Model;
 
 final class VerifyResponseMiddleware implements VerifyResponseMiddlewareInterface
 {
     /**
      * @return mixed
      */
-    public function __invoke(Request $request, Payment $payment) {}
+    public function __invoke(Request $request, Model $payment) {}
 }

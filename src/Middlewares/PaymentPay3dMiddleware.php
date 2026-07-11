@@ -4,7 +4,7 @@ namespace MedyaT\Parapos\Middlewares;
 
 use MedyaT\Parapos\Config\HttpRequest;
 use MedyaT\Parapos\Config\HttpResponse;
-use MedyaT\Parapos\Models\Payment;
+use MedyaT\Parapos\Contracts\PaymentStatus;
 
 final class PaymentPay3dMiddleware
 {
@@ -27,7 +27,7 @@ final class PaymentPay3dMiddleware
         $response_array = $response->toArray();
 
         if ($response->headers['http_code'] != 200) {
-            $response->payment->status = Payment::PAYMENT_FAIL;
+            $response->payment->status = PaymentStatus::PAYMENT_FAIL;
             $response->payment->save();
 
             $message = $response_array['message'] ?? 'Payment failed.';

@@ -3,9 +3,16 @@
 namespace MedyaT\Parapos\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use MedyaT\Parapos\Concerns\InteractsWithParaposPayment;
+use MedyaT\Parapos\Contracts\PaymentStatus;
 
 /**
- * @property int $id
+ * Default payment model (bigint primary key). Host apps may point
+ * `config('parapos.model')` at their own Eloquent model instead — it only has
+ * to `use InteractsWithParaposPayment` and `implements PaymentStatus`, so a
+ * uuid-keyed / tenant-aware model works just as well.
+ *
+ * @property int|string $id
  * @property string $parapos_code
  * @property string $bin
  * @property float $amount
@@ -19,33 +26,19 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $status
  * @property int $is_pre_auth
  * @property int $auto_complete
- * @property ?int $reference_id
- * @property ?int $foreign_id_1
- * @property ?int $foreign_id_2
- * @property ?int $foreign_id_3
- * @property ?int $user_id
+ * @property int|string|null $reference_id
+ * @property int|string|null $foreign_id_1
+ * @property int|string|null $foreign_id_2
+ * @property int|string|null $foreign_id_3
+ * @property int|string|null $user_id
  * @property ?string $request_code
  * @property ?string $response_code
  * @property ?string $description
  * @property ?string $result_message
  */
-final class Payment extends Model
+class Payment extends Model implements PaymentStatus
 {
-    public const PAYMENT_SUCCESS = 0;
-
-    public const PAYMENT_PENDING = 1;
-
-    public const PAYMENT_FAIL = 2;
-
-    public const PAYMENT_PRE_AUTHORIZED = 3;
-
-    public const PAYMENT_PRE_AUTH_CANCELLED = 4;
-
-    public const PAYMENT_PRE_AUTH_CANCEL_FAILED = 5;
-
-    public const PAYMENT_PRE_AUTH_CANCEL_ABANDONED = 6;
-
-    public const PAYMENT_COMPLETE_PENDING = 7;
+    use InteractsWithParaposPayment;
 
     protected $guarded = ['id'];
 
@@ -66,32 +59,4 @@ final class Payment extends Model
     protected $attributes = [
         'status' => self::PAYMENT_PENDING,
     ];
-
-    /**
-     * @var string
-     */
-    private const CHARACTERS = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
-
-    public static function boot(): void
-    {
-
-        self::bootTraits();
-
-        self::creating(function ($model): void {
-            if (empty($model->response_hash)) {
-                $model->response_hash = $model->generate_random_string();
-            }
-        });
-    }
-
-    public function generate_random_string(int $length = 20): string
-    {
-        $charactersLength = strlen(self::CHARACTERS);
-        $randomString = '';
-        for ($i = 0; $i < $length; $i++) {
-            $randomString .= self::CHARACTERS[random_int(0, $charactersLength - 1)];
-        }
-
-        return $randomString;
-    }
 }

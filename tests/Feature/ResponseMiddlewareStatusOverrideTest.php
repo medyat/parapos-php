@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use MedyaT\Parapos\Middlewares\VerifyResponseMiddlewareInterface;
+use Illuminate\Database\Eloquent\Model;
 use MedyaT\Parapos\Models\Payment;
 
 /**
@@ -13,7 +14,7 @@ use MedyaT\Parapos\Models\Payment;
  */
 class DowngradeToFailMiddleware implements VerifyResponseMiddlewareInterface
 {
-    public function __invoke(Request $request, Payment $payment)
+    public function __invoke(Request $request, Model $payment)
     {
         $payment->status = Payment::PAYMENT_FAIL;
     }
@@ -21,7 +22,7 @@ class DowngradeToFailMiddleware implements VerifyResponseMiddlewareInterface
 
 class DowngradeToFailWithMessageMiddleware implements VerifyResponseMiddlewareInterface
 {
-    public function __invoke(Request $request, Payment $payment)
+    public function __invoke(Request $request, Model $payment)
     {
         $payment->status = Payment::PAYMENT_FAIL;
         $payment->result_message = 'Kart Sahibine Açık Olmayan İşlem';
@@ -30,7 +31,7 @@ class DowngradeToFailWithMessageMiddleware implements VerifyResponseMiddlewareIn
 
 class NoopResponseMiddleware implements VerifyResponseMiddlewareInterface
 {
-    public function __invoke(Request $request, Payment $payment) {}
+    public function __invoke(Request $request, Model $payment) {}
 }
 
 beforeEach(function () {

@@ -11,12 +11,12 @@ use MedyaT\Parapos\DataObjects\CardDataObject;
 use MedyaT\Parapos\DataObjects\DealerAmountDataObject;
 use MedyaT\Parapos\Exceptions\NoCreditCardDefined;
 use MedyaT\Parapos\Exceptions\NoPaymentDefined;
+use Illuminate\Database\Eloquent\Model;
 use MedyaT\Parapos\Middlewares\PaymentPay3dMiddleware;
-use MedyaT\Parapos\Models\Payment;
 
 final class PaymentService extends Service
 {
-    public Payment $payment;
+    public Model $payment;
 
     public CardDataObject $card;
 
@@ -195,15 +195,15 @@ final class PaymentService extends Service
     public function addPayment(
         string $client_ip,
         float $amount,
-        ?int $payment_id = null,
-        ?int $user_id = null,
-        ?int $reference_id = null,
+        int|string|null $payment_id = null,
+        int|string|null $user_id = null,
+        int|string|null $reference_id = null,
         string $currency_code = 'TRY',
         int $installment = 1,
         float $ratio = 0,
-        ?int $foreign_id_1 = null,
-        ?int $foreign_id_2 = null,
-        ?int $foreign_id_3 = null,
+        int|string|null $foreign_id_1 = null,
+        int|string|null $foreign_id_2 = null,
+        int|string|null $foreign_id_3 = null,
         ?string $request_code = null,
         ?string $response_code = null,
         ?string $description = null,

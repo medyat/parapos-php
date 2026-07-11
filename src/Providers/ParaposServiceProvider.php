@@ -12,7 +12,11 @@ final class ParaposServiceProvider extends ServiceProvider
     public function boot(Router $router): void
     {
 
-        $this->loadMigrationsFrom(__DIR__.'/../../database/migrations');
+        if (config('parapos.load_migrations', true)) {
+            $this->loadMigrationsFrom(__DIR__.'/../../database/migrations');
+        }
+
+        $this->publishes([__DIR__.'/../../database/migrations' => database_path('migrations')], 'parapos-migrations');
 
         $this->publishes([__DIR__.'/../../config/parapos.php' => config_path('parapos.php')]);
 

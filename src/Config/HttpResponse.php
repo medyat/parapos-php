@@ -2,12 +2,12 @@
 
 namespace MedyaT\Parapos\Config;
 
-use MedyaT\Parapos\Models\Payment;
+use Illuminate\Database\Eloquent\Model;
 
 final class HttpResponse implements \Stringable
 {
     /** @param  mixed[]  $headers */
-    public function __construct(public Payment $payment, public string $response, public array $headers = []) {}
+    public function __construct(public Model $payment, public string $response, public array $headers = []) {}
 
     public function __toString(): string
     {

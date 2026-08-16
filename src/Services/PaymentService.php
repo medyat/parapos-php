@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MedyaT\Parapos\Services;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use MedyaT\Parapos\Actions\FindOrNewPaymentAction;
 use MedyaT\Parapos\Config\Service;
@@ -11,7 +12,6 @@ use MedyaT\Parapos\DataObjects\CardDataObject;
 use MedyaT\Parapos\DataObjects\DealerAmountDataObject;
 use MedyaT\Parapos\Exceptions\NoCreditCardDefined;
 use MedyaT\Parapos\Exceptions\NoPaymentDefined;
-use Illuminate\Database\Eloquent\Model;
 use MedyaT\Parapos\Middlewares\PaymentPay3dMiddleware;
 
 final class PaymentService extends Service
@@ -210,7 +210,7 @@ final class PaymentService extends Service
         bool $is_pre_auth = false,
         bool $auto_complete = false
     ): self {
-        $this->payment = (new FindOrNewPaymentAction)($payment_id);
+        $this->payment = (new FindOrNewPaymentAction($this->config->model))($payment_id);
         $this->payment->ip = $client_ip;
         $this->payment->amount = $amount;
         $this->payment->installment = $installment;

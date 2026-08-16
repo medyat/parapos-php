@@ -24,7 +24,9 @@ final class ParaposServiceProvider extends ServiceProvider
 
         $this->loadViewsFrom(__DIR__.'/../../resources/views', 'parapos');
 
-        $this->loadRoutesFrom(__DIR__.'/../../routes/web.php');
+        if (config('parapos.register_routes', true)) {
+            $this->loadRoutesFrom(__DIR__.'/../../routes/web.php');
+        }
 
     }
 
@@ -32,6 +34,22 @@ final class ParaposServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__.'/../../config/parapos.php', 'parapos');
 
-        $this->app->scoped(Parapos::class, fn (Application $app): Parapos => new Parapos(config('parapos')));
+        $this->app->scoped(Parapos::class, function (Application $app): Parapos {
+            /** @var array<string, mixed> $config */
+            $config = config('parapos');
+
+            /*
+             * The container binding is the *global* profile, so it has to keep
+             * reading `config('parapos.tenant')` at call time — multi-tenant
+             * hosts set that per request, often after this instance is
+             * resolved. The shipped config file carries `'tenant' => null`,
+             * and passing that through would pin "no tenant" for the lifetime
+             * of the instance. Per-instance tenants are for callers who
+             * construct Parapos themselves.
+             */
+            unset($config['tenant']);
+
+            return new Parapos($config);
+        });
     }
 }

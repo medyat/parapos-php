@@ -16,6 +16,13 @@ return [
      */
     'load_migrations' => true,
 
+    /*
+     * Register the bundled 3D callback route. Set to false when the host app
+     * registers its own — e.g. more than one, against different models — using
+     * MedyaT\Parapos\Http\HandleResponseAction.
+     */
+    'register_routes' => true,
+
     'isTest' => false,
     'apiKey' => '',
     'secretKey' => '',

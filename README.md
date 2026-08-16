@@ -25,6 +25,43 @@ The bundled (bigint) migration can be published as a starting point:
 php artisan vendor:publish --tag=parapos-migrations
 ```
 
+## Running two profiles in one application
+
+Global config assumes one profile per process. When an application collects on more than one — say
+a tenant context and an admin context sharing the same workers — pass the profile to `Parapos`
+instead, and nothing has to be written to global config (writes that would otherwise leak from one
+request into the next under Octane or a queue worker):
+
+```php
+$parapos = new Parapos([
+    'apiKey' => '...',
+    'secretKey' => '...',
+    'model' => \App\Models\Landlord\LandlordCardPayment::class,
+    'response_url' => 'landlord/parapos/response/{hash}',
+    'appUrl' => 'https://admin.example.com',
+]);
+```
+
+`model`, `response_url`, `tenant` and `appUrl` each fall back to `config('parapos.*')` (and
+`config('app.url')`) when omitted, so an application with a single profile needs no changes.
+
+The 3D callback needs a matching route. Extend `HandleResponseAction`, override what differs, and
+register it wherever you like:
+
+```php
+class LandlordParaposResponseController extends \MedyaT\Parapos\Http\HandleResponseAction
+{
+    protected function model(): string
+    {
+        return \App\Models\Landlord\LandlordCardPayment::class;
+    }
+}
+
+Route::post('landlord/parapos/response/{hash}', LandlordParaposResponseController::class);
+```
+
+Set `'register_routes' => false` if you would rather register every callback route yourself.
+
 🧹 Keep a modern codebase with **Pint**:
 ```bash
 composer lint

@@ -16,7 +16,7 @@ final class CardService extends Service
     {
         $params = ['bin' => $bin];
 
-        $payment = (new FindOrNewPaymentAction)($payment_id);
+        $payment = (new FindOrNewPaymentAction($this->config->model))($payment_id);
 
         return $this->http->post(payment: $payment, uri: 'bin', params: $params)->toArray();
     }
@@ -36,7 +36,7 @@ final class CardService extends Service
             $params['sub_amounts'] = $subAmounts;
         }
 
-        $payment = (new FindOrNewPaymentAction)($payment_id);
+        $payment = (new FindOrNewPaymentAction($this->config->model))($payment_id);
 
         return $this->http->post(payment: $payment, uri: 'installment', params: $params)->toArray();
     }

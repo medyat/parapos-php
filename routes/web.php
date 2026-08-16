@@ -1,50 +1,8 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use MedyaT\Parapos\Exceptions\VerifyResponseMiddlewareShouldBeImplemented;
-use MedyaT\Parapos\Middlewares\VerifyResponseMiddlewareInterface;
-use MedyaT\Parapos\Models\Payment;
+use MedyaT\Parapos\Http\HandleResponseAction;
 
-Route::post('parapos/response/{hash}/{tenant?}', function (Request $request, $hash, $tenant = null) {
-
-    $payment = Payment::where('response_hash', $hash)->where('status', Payment::PAYMENT_PENDING)->firstOrFail();
-
-    $resultCode = $request->get('result_code');
-    $resultMessage = $request->get('result_message');
-
-    if ($resultCode === 'OK' && $payment->is_pre_auth) {
-        $payment->status = Payment::PAYMENT_PRE_AUTHORIZED;
-    } elseif ($resultCode === 'OK') {
-        $payment->status = Payment::PAYMENT_SUCCESS;
-    } else {
-        $payment->status = Payment::PAYMENT_FAIL;
-    }
-
-    $middlewares = config('parapos.response_middlewares', []);
-
-    foreach ($middlewares as $middleware) {
-        $middleware = new $middleware;
-        if (! in_array(VerifyResponseMiddlewareInterface::class, class_implements($middleware))) {
-            throw new VerifyResponseMiddlewareShouldBeImplemented;
-        }
-        $middleware($request, $payment);
-    }
-
-    $payment->save();
-
-    $finalResultCode = match ($payment->status) {
-        Payment::PAYMENT_SUCCESS, Payment::PAYMENT_PRE_AUTHORIZED => 'OK',
-        default => 'FAIL',
-    };
-
-    return view(config('parapos.view', 'parapos::response'), [
-        'id' => $payment->id,
-        'hash' => $payment->response_hash,
-        'result_code' => $finalResultCode,
-        'result_message' => $payment->result_message ?? $resultMessage,
-    ]);
-
-})
+Route::post('parapos/response/{hash}/{tenant?}', HandleResponseAction::class)
     ->middleware('parapos-middleware')
     ->name('parapos.response');
